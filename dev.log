@@ -38,61 +38,43 @@
  [32m[1m✓[22m[39m Compiled instrumentation Edge in 0ms
  [32m[1m✓[22m[39m Compiled in 1837ms
  [32m[1m✓[22m[39m Compiled in 331ms
-[1m✓[22m[39m Compiled / in 17ms
- GET / [32m200[39m in 192ms
- [32m[1m✓[22m[39m Compiled instrumentation Node.js in 1ms
- [32m[1m✓[22m[39m Compiled instrumentation Edge in 1ms
- [32m[1m✓[22m[39m Compiled in 206ms
- GET / [32m200[39m in 155ms
- [32m[1m✓[22m[39m Compiled instrumentation Node.js in 2ms
- [32m[1m✓[22m[39m Compiled instrumentation Edge in 2ms
- [32m[1m✓[22m[39m Compiled in 207ms
- GET / [32m200[39m in 162ms
- GET / [32m200[39m in 136ms
- [32m[1m✓[22m[39m Compiled instrumentation Node.js in 1ms
- [32m[1m✓[22m[39m Compiled instrumentation Edge in 1ms
- [32m[1m✓[22m[39m Compiled in 348ms
- GET / [32m200[39m in 347ms
- GET / [32m200[39m in 97ms
- [32m[1m✓[22m[39m Compiled in 214ms
- [32m[1m✓[22m[39m Compiled in 259ms
- [32m[1m✓[22m[39m Compiled / in 19ms
- GET / [32m200[39m in 670ms
- GET / [32m200[39m in 131ms
- [37m[1m○[22m[39m Compiling /shop ...
- [32m[1m✓[22m[39m Compiled /shop in 1015ms
- GET /shop?category=pronunciation [32m200[39m in 1163ms
- GET /shop?category=business [32m200[39m in 304ms
- GET /shop [32m200[39m in 266ms
- [32m[1m✓[22m[39m Compiled / in 25ms
- GET / [32m200[39m in 227ms
- [32m[1m✓[22m[39m Compiled / in 16ms
- GET / [32m200[39m in 139ms
- GET / [32m200[39m in 263ms
- GET / [32m200[39m in 80ms
- [32m[1m✓[22m[39m Compiled in 743ms
- [32m[1m✓[22m[39m Compiled / in 22ms
- GET / [32m200[39m in 174ms
- GET / [32m200[39m in 126ms
- GET / [32m200[39m in 59ms
- [32m[1m✓[22m[39m Compiled in 614ms
- [32m[1m✓[22m[39m Compiled in 215ms
- [32m[1m✓[22m[39m Compiled in 231ms
- [32m[1m✓[22m[39m Compiled in 129ms
- [32m[1m✓[22m[39m Compiled / in 18ms
- GET / [32m200[39m in 395ms
- GET / [32m200[39m in 114ms
- GET / [32m200[39m in 154ms
- [32m[1m✓[22m[39m Compiled / in 21ms
- GET / [32m200[39m in 155ms
- GET / [32m200[39m in 136ms
- GET / [32m200[39m in 227ms
- [32m[1m✓[22m[39m Compiled /shop in 30ms
- GET /shop [32m200[39m in 60ms
- GET / [32m200[39m in 78ms
- GET /shop [32m200[39m in 154ms
- GET / [32m200[39m in 72ms
- [32m[1m✓[22m[39m Compiled in 218ms
+ [32m[1m✓[22m[39m Compiled in 221ms
+ [32m[1m✓[22m[39m Compiled in 131ms
+ [32m[1m✓[22m[39m Compiled in 245ms
+ [32m[1m✓[22m[39m Compiled / in 205ms
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/build-manifest.json'[39m
+}
+ [37m[1m○[22m[39m Compiling /_error ...
+ [32m[1m✓[22m[39m Compiled /_error in 1454ms
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.fm63iddpkx'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.fm63iddpkx'[39m
+}
+[Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/build-manifest.json'[39m
+}
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.exjez0oceif'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.exjez0oceif'[39m
+}
+[Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.00rqv44q89tdc'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.00rqv44q89tdc'[39m
+}
+[22m[39m Compiled in 218ms
  [32m[1m✓[22m[39m Compiled / in 191ms
  GET / [32m200[39m in 784ms
  GET / [32m200[39m in 666ms
@@ -121,3 +103,68 @@
  GET / [32m200[39m in 126ms
  GET / [32m200[39m in 142ms
  [32m[1m✓[22m[39m Compiled in 460ms
+ [32m[1m✓[22m[39m Compiled / in 9ms
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/app-build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/app-build-manifest.json'[39m
+}
+ [37m[1m○[22m[39m Compiling /_error ...
+ [32m[1m✓[22m[39m Compiled /_error in 1444ms
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.9krojo9w3n5'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.9krojo9w3n5'[39m
+}
+[Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/app-build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/app-build-manifest.json'[39m
+}
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.8vstqx1d12'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.8vstqx1d12'[39m
+}
+[Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.xheca639xb'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.xheca639xb'[39m
+}
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/app-build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/app-build-manifest.json'[39m
+}
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.eqcom9m7mng'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.eqcom9m7mng'[39m
+}
+[Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/app-build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/app-build-manifest.json'[39m
+}
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.os5kwpa3zss'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.os5kwpa3zss'[39m
+}
+[Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.gi7sscz8rog'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.gi7sscz8rog'[39m
+}
+ [32m[1m✓[22m[39m Compiled in 155ms
+ [32m[1m✓[22m[39m Compiled in 268ms

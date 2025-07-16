@@ -188,9 +188,12 @@ export default function ContactPage() {
                       By submitting this form, you agree to our privacy policy and consent to being contacted by our team.
                     </div>
                     
-                    <Button type="submit" intent="primary" className="w-full">
+                    <button 
+                      type="submit" 
+                      className="justify-center inline-flex items-center rounded-full text-center transition-all duration-200 font-medium shadow-md hover:shadow-lg bg-gradient-primary text-white border-0 hover:opacity-90 hover:scale-[1.02] min-w-36 h-12 text-base py-3 px-6 w-full"
+                    >
                       Send Message
-                    </Button>
+                    </button>
                   </form>
                 </>
               )}

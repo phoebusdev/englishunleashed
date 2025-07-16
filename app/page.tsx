@@ -35,9 +35,11 @@ export default function Web() {
               Simple, clear English learning materials you can download and use anywhere.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button href={`/shop#${featuredProduct.id}`} intent="secondary" size="lg" className="bg-white text-gray-800 hover:bg-gray-100">
-                Get One PDF - {featuredProduct.price}
-              </Button>
+              {featuredProduct && (
+                <Button href={`/shop#${featuredProduct.id}`} intent="secondary" size="lg" className="bg-white text-gray-800 hover:bg-gray-100">
+                  Get One PDF - {featuredProduct.price}
+                </Button>
+              )}
               <Button href="/shop" size="lg" className="bg-white/20 text-white border-2 border-white/50 hover:bg-white/30 backdrop-blur-sm">
                 Shop All PDFs
               </Button>
@@ -57,24 +59,35 @@ export default function Web() {
             </p>
           </div>
           
-          <div className="max-w-md mx-auto">
-            <ProductCard
-              title={featuredProduct.title.replace(' - English Unleashed Edition', '')}
-              price={featuredProduct.price}
-              category={featuredProduct.category}
-              description={featuredProduct.description}
-              href={`/shop#${featuredProduct.id}`}
-              featured={true}
-            />
-            <div className="text-center mt-8">
+          {featuredProduct ? (
+            <div className="max-w-md mx-auto">
+              <ProductCard
+                title={featuredProduct.title.replace(' - English Unleashed Edition', '')}
+                price={featuredProduct.price}
+                category={featuredProduct.category}
+                description={featuredProduct.description}
+                href={`/shop#${featuredProduct.id}`}
+                featured={true}
+              />
+              <div className="text-center mt-8">
+                <a href="/shop" className="inline-flex items-center text-primary hover:text-secondary font-medium transition-colors">
+                  See All PDFs 
+                  <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center">
               <a href="/shop" className="inline-flex items-center text-primary hover:text-secondary font-medium transition-colors">
-                See All PDFs 
+                Browse All PDFs 
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </a>
             </div>
-          </div>
+          )}
         </div>
       </section>
     </>
