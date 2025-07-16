@@ -1,7 +1,7 @@
 import "styles/tailwind.css"
-import { ThemeProvider } from "./providers"
 import { Navigation } from "components/Navigation/Navigation"
 import { Footer } from "components/Footer/Footer"
+import { ThemeProvider } from "./providers"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

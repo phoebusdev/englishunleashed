@@ -37,9 +37,8 @@
  [32m[1m✓[22m[39m Compiled instrumentation Node.js in 8ms
  [32m[1m✓[22m[39m Compiled instrumentation Edge in 0ms
  [32m[1m✓[22m[39m Compiled in 1837ms
-19ms
- GET / [32m200[39m in 320ms
- [32m[1m✓[22m[39m Compiled / in 17ms
+ [32m[1m✓[22m[39m Compiled in 331ms
+[1m✓[22m[39m Compiled / in 17ms
  GET / [32m200[39m in 192ms
  [32m[1m✓[22m[39m Compiled instrumentation Node.js in 1ms
  [32m[1m✓[22m[39m Compiled instrumentation Edge in 1ms
@@ -116,3 +115,9 @@
  [37m[1m○[22m[39m Compiling /icon.png ...
  [32m[1m✓[22m[39m Compiled /icon.png in 655ms
  GET /icon.png?icon.f6418310.png [32m200[39m in 965ms
+ [32m[1m✓[22m[39m Compiled in 461ms
+ [32m[1m✓[22m[39m Compiled / in 154ms
+ GET / [32m200[39m in 607ms
+ GET / [32m200[39m in 126ms
+ GET / [32m200[39m in 142ms
+ [32m[1m✓[22m[39m Compiled in 460ms

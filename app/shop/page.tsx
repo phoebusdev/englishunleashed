@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ProductCard } from "components/ProductCard/ProductCard"
-import { products, getProductsByCategory } from "data/products"
+import { getProductsByCategory } from "data/products"
 
 const categories = [
   { id: 'all', name: 'All Categories' },
