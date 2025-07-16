@@ -1,0 +1,118 @@
+
+> next-enterprise@0.0.0 dev /home/henri/projects/langsitelast/next-enterprise
+> cross-env FORCE_COLOR=1 next dev --turbo
+
+ [33m[1m⚠[22m[39m Port 3000 is in use, using available port 3001 instead.
+   [1m[38;2;173;127;168m▲ Next.js 15.3.1[39m[22m (Turbopack)
+   - Local:        http://localhost:3001
+   - Network:      http://10.255.255.254:3001
+
+ [32m[1m✓[22m[39m Starting...
+ [32m[1m✓[22m[39m Compiled instrumentation Node.js in 291ms
+ [32m[1m✓[22m[39m Compiled instrumentation Edge in 198ms
+ [32m[1m✓[22m[39m Ready in 1342ms
+ [37m[1m○[22m[39m Compiling / ...
+ [32m[1m✓[22m[39m Compiled / in 2.1s
+ GET / [32m200[39m in 2387ms
+ [32m[1m✓[22m[39m Compiled in 702ms
+ [32m[1m✓[22m[39m Compiled in 164ms
+ [32m[1m✓[22m[39m Compiled in 202ms
+ [32m[1m✓[22m[39m Compiled in 222ms
+ [32m[1m✓[22m[39m Compiled in 149ms
+ [32m[1m✓[22m[39m Compiled in 140ms
+ [32m[1m✓[22m[39m Compiled instrumentation Node.js in 1ms
+ [32m[1m✓[22m[39m Compiled instrumentation Edge in 0ms
+ [32m[1m✓[22m[39m Compiled instrumentation Node.js in 0ms
+ [32m[1m✓[22m[39m Compiled instrumentation Edge in 0ms
+ [32m[1m✓[22m[39m Compiled instrumentation Node.js in 1ms
+ [32m[1m✓[22m[39m Compiled instrumentation Edge in 1ms
+ [32m[1m✓[22m[39m Compiled in 187ms
+ [32m[1m✓[22m[39m Compiled in 537ms
+ [32m[1m✓[22m[39m Compiled in 210ms
+ [32m[1m✓[22m[39m Compiled in 219ms
+ [32m[1m✓[22m[39m Compiled in 195ms
+ [32m[1m✓[22m[39m Compiled in 435ms
+ [32m[1m✓[22m[39m Compiled in 636ms
+ [32m[1m✓[22m[39m Compiled in 203ms
+ [32m[1m✓[22m[39m Compiled instrumentation Node.js in 8ms
+ [32m[1m✓[22m[39m Compiled instrumentation Edge in 0ms
+ [32m[1m✓[22m[39m Compiled in 1837ms
+19ms
+ GET / [32m200[39m in 320ms
+ [32m[1m✓[22m[39m Compiled / in 17ms
+ GET / [32m200[39m in 192ms
+ [32m[1m✓[22m[39m Compiled instrumentation Node.js in 1ms
+ [32m[1m✓[22m[39m Compiled instrumentation Edge in 1ms
+ [32m[1m✓[22m[39m Compiled in 206ms
+ GET / [32m200[39m in 155ms
+ [32m[1m✓[22m[39m Compiled instrumentation Node.js in 2ms
+ [32m[1m✓[22m[39m Compiled instrumentation Edge in 2ms
+ [32m[1m✓[22m[39m Compiled in 207ms
+ GET / [32m200[39m in 162ms
+ GET / [32m200[39m in 136ms
+ [32m[1m✓[22m[39m Compiled instrumentation Node.js in 1ms
+ [32m[1m✓[22m[39m Compiled instrumentation Edge in 1ms
+ [32m[1m✓[22m[39m Compiled in 348ms
+ GET / [32m200[39m in 347ms
+ GET / [32m200[39m in 97ms
+ [32m[1m✓[22m[39m Compiled in 214ms
+ [32m[1m✓[22m[39m Compiled in 259ms
+ [32m[1m✓[22m[39m Compiled / in 19ms
+ GET / [32m200[39m in 670ms
+ GET / [32m200[39m in 131ms
+ [37m[1m○[22m[39m Compiling /shop ...
+ [32m[1m✓[22m[39m Compiled /shop in 1015ms
+ GET /shop?category=pronunciation [32m200[39m in 1163ms
+ GET /shop?category=business [32m200[39m in 304ms
+ GET /shop [32m200[39m in 266ms
+ [32m[1m✓[22m[39m Compiled / in 25ms
+ GET / [32m200[39m in 227ms
+ [32m[1m✓[22m[39m Compiled / in 16ms
+ GET / [32m200[39m in 139ms
+ GET / [32m200[39m in 263ms
+ GET / [32m200[39m in 80ms
+ [32m[1m✓[22m[39m Compiled in 743ms
+ [32m[1m✓[22m[39m Compiled / in 22ms
+ GET / [32m200[39m in 174ms
+ GET / [32m200[39m in 126ms
+ GET / [32m200[39m in 59ms
+ [32m[1m✓[22m[39m Compiled in 614ms
+ [32m[1m✓[22m[39m Compiled in 215ms
+ [32m[1m✓[22m[39m Compiled in 231ms
+ [32m[1m✓[22m[39m Compiled in 129ms
+ [32m[1m✓[22m[39m Compiled / in 18ms
+ GET / [32m200[39m in 395ms
+ GET / [32m200[39m in 114ms
+ GET / [32m200[39m in 154ms
+ [32m[1m✓[22m[39m Compiled / in 21ms
+ GET / [32m200[39m in 155ms
+ GET / [32m200[39m in 136ms
+ GET / [32m200[39m in 227ms
+ [32m[1m✓[22m[39m Compiled /shop in 30ms
+ GET /shop [32m200[39m in 60ms
+ GET / [32m200[39m in 78ms
+ GET /shop [32m200[39m in 154ms
+ GET / [32m200[39m in 72ms
+ [32m[1m✓[22m[39m Compiled in 218ms
+ [32m[1m✓[22m[39m Compiled / in 191ms
+ GET / [32m200[39m in 784ms
+ GET / [32m200[39m in 666ms
+ [32m[1m✓[22m[39m Compiled /shop in 74ms
+ GET /shop [32m200[39m in 327ms
+ GET / [32m200[39m in 154ms
+ [32m[1m✓[22m[39m Compiled / in 18ms
+ GET / [32m200[39m in 163ms
+ GET / [32m200[39m in 132ms
+ GET / [32m200[39m in 126ms
+ [32m[1m✓[22m[39m Compiled instrumentation Node.js in 2ms
+ [32m[1m✓[22m[39m Compiled instrumentation Edge in 1ms
+ [32m[1m✓[22m[39m Compiled in 2.3s
+ [32m[1m✓[22m[39m Compiled / in 27ms
+ GET / [32m200[39m in 2189ms
+ GET / [32m200[39m in 63ms
+ GET / [32m200[39m in 114ms
+ GET / [32m200[39m in 86ms
+ GET / [32m200[39m in 75ms
+ [37m[1m○[22m[39m Compiling /icon.png ...
+ [32m[1m✓[22m[39m Compiled /icon.png in 655ms
+ GET /icon.png?icon.f6418310.png [32m200[39m in 965ms
