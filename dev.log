@@ -74,8 +74,8 @@
   syscall: [32m'open'[39m,
   path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/static/development/_buildManifest.js.tmp.00rqv44q89tdc'[39m
 }
-[22m[39m Compiled in 218ms
- [32m[1m✓[22m[39m Compiled / in 191ms
+ [32m[1m✓[22m[39m Compiled in 224ms
+[22m[39m Compiled / in 191ms
  GET / [32m200[39m in 784ms
  GET / [32m200[39m in 666ms
  [32m[1m✓[22m[39m Compiled /shop in 74ms
