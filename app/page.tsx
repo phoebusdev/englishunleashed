@@ -66,7 +66,9 @@ export default function Web() {
                 price={featuredProduct.price}
                 category={featuredProduct.category}
                 description={featuredProduct.description}
-                href={`/shop#${featuredProduct.id}`}
+                href={`/shop/${featuredProduct.id}`}
+                gumroadUrl={featuredProduct.gumroadUrl}
+                previewVideoId={featuredProduct.previewVideoId}
                 featured={true}
               />
               <div className="text-center mt-8">

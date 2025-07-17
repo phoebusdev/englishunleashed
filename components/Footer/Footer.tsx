@@ -66,6 +66,7 @@ export function Footer() {
             <h5 className="font-semibold text-gray-900 mb-4">Support</h5>
             <ul className="space-y-2">
               <li><Link href="/about" className="text-sm text-gray-600 hover:text-primary transition-colors">About</Link></li>
+              <li><Link href="/videos" className="text-sm text-gray-600 hover:text-primary transition-colors">Videos</Link></li>
               <li><Link href="/contact" className="text-sm text-gray-600 hover:text-primary transition-colors">Contact</Link></li>
               <li><Link href="/faq" className="text-sm text-gray-600 hover:text-primary transition-colors">FAQ</Link></li>
               <li><Link href="/privacy" className="text-sm text-gray-600 hover:text-primary transition-colors">Privacy Policy</Link></li>

@@ -64,7 +64,9 @@ export default function ShopPage() {
                     price={product.price}
                     category={product.category}
                     description={product.description}
-                    href="#"
+                    href={`/shop/${product.id}`}
+                    gumroadUrl={product.gumroadUrl}
+                    previewVideoId={product.previewVideoId}
                     featured={product.featured}
                   />
                 </div>

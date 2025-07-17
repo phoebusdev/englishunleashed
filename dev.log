@@ -168,3 +168,34 @@
 }
  [32m[1m✓[22m[39m Compiled in 155ms
  [32m[1m✓[22m[39m Compiled in 268ms
+ [32m[1m✓[22m[39m Compiled / in 47ms
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/build-manifest.json'[39m
+}
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/pages/_app/build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/pages/_app/build-manifest.json'[39m
+}
+[Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/app/page/build-manifest.json'[39m
+}
+ [31m[1m⨯[22m[39m [Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/pages/_app/build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/pages/_app/build-manifest.json'[39m
+}
+[Error: ENOENT: no such file or directory, open '/home/henri/projects/langsitelast/next-enterprise/.next/server/pages/_app/build-manifest.json'] {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'open'[39m,
+  path: [32m'/home/henri/projects/langsitelast/next-enterprise/.next/server/pages/_app/build-manifest.json'[39m
+}

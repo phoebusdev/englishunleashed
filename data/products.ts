@@ -8,6 +8,10 @@ export interface Product {
   features: string[]
   featured?: boolean
   relatedEpisode?: string
+  gumroadUrl?: string        // Direct link to Gumroad product
+  youtubeVideoId?: string    // For video products or previews
+  previewVideoId?: string    // Short preview/trailer
+  episodeVideoIds?: string[] // Related YouTube episode IDs
 }
 
 export const products: Product[] = [
@@ -27,7 +31,10 @@ export const products: Product[] = [
       'Print-friendly format for offline practice'
     ],
     featured: true,
-    relatedEpisode: 'Episode #45'
+    relatedEpisode: 'Episode #45',
+    gumroadUrl: 'https://englishunleashed.gumroad.com/l/daily-routines',
+    previewVideoId: 'dQw4w9WgXcQ', // Replace with actual preview video ID
+    episodeVideoIds: ['abc123xyz', 'def456uvw'] // Replace with actual episode IDs
   },
   {
     id: 'small-talk-mastery',
@@ -46,7 +53,10 @@ export const products: Product[] = [
       'Native British pronunciation techniques'
     ],
     featured: true,
-    relatedEpisode: 'Episode #44'
+    relatedEpisode: 'Episode #44',
+    gumroadUrl: 'https://englishunleashed.gumroad.com/l/small-talk-mastery',
+    youtubeVideoId: 'videoId123', // Replace with actual video course ID
+    previewVideoId: 'previewId123' // Replace with actual preview ID
   },
   {
     id: 'british-pronunciation-bundle',
