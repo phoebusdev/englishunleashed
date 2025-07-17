@@ -10,9 +10,15 @@ export default async function VideosPage() {
   let youtubeVideos: YouTubeVideo[] = []
   let hasError = false
   
+  console.log('YouTube Channel ID:', env.YOUTUBE_CHANNEL_ID)
+  console.log('YouTube API Key exists:', !!env.YOUTUBE_API_KEY)
+  
   try {
     if (env.YOUTUBE_CHANNEL_ID) {
       youtubeVideos = await fetchChannelVideos(env.YOUTUBE_CHANNEL_ID, 50)
+      console.log('Fetched videos count:', youtubeVideos.length)
+    } else {
+      console.log('No YouTube Channel ID configured')
     }
   } catch (error) {
     console.error('Error fetching YouTube videos:', error)

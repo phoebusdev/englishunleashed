@@ -89,6 +89,8 @@ export async function fetchChannelVideos(
     return []
   }
 
+  console.log('Fetching videos for channel:', channelId)
+
   try {
     // First, search for videos in the channel
     const searchUrl = `${API_BASE}/search?` + new URLSearchParams({
@@ -101,8 +103,22 @@ export async function fetchChannelVideos(
     })
 
     const searchResponse = await fetch(searchUrl)
+    
+    if (!searchResponse.ok) {
+      console.error('YouTube API error:', searchResponse.status, searchResponse.statusText)
+      const errorData = await searchResponse.text()
+      console.error('Error details:', errorData)
+      return []
+    }
+    
     const searchData = await searchResponse.json() as {
       items?: Array<{ id: { videoId: string } }>
+      error?: { message: string }
+    }
+    
+    if (searchData.error) {
+      console.error('YouTube API error:', searchData.error.message)
+      return []
     }
 
     if (!searchData.items || searchData.items.length === 0) {
