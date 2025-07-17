@@ -88,6 +88,7 @@
     "@typescript-eslint/eslint-plugin": "8.21.0",
     "all-contributors-cli": "^6.26.1",
     "cross-env": "^7.0.3",
+    "dotenv": "^17.2.0",
     "eslint": "^9.26.0",
     "eslint-config-next": "15.1.6",
     "eslint-config-prettier": "^10.1.2",
