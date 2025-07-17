@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from 'components/Button/Button'
 import { VideoPlayer } from 'components/VideoPlayer/VideoPlayer'
 import { products } from 'data/products'
@@ -40,7 +40,7 @@ const categories = [
 
 export default function VideoPageClient({ videos, hasError }: VideoPageClientProps) {
   const [selectedCategory, setSelectedCategory] = useState('all')
-  const [selectedVideo, setSelectedVideo] = useState(videos[0])
+  const [selectedVideo, setSelectedVideo] = useState(videos && videos.length > 0 ? videos[0] : null)
   
   const filteredVideos = selectedCategory === 'all' 
     ? videos 
@@ -49,6 +49,13 @@ export default function VideoPageClient({ videos, hasError }: VideoPageClientPro
   const relatedProducts = selectedVideo?.relatedProducts
     ? products.filter(p => selectedVideo.relatedProducts.includes(p.id))
     : []
+  
+  // Update selected video when category changes
+  useEffect(() => {
+    if (filteredVideos.length > 0 && (!selectedVideo || !filteredVideos.find(v => v.id === selectedVideo.id))) {
+      setSelectedVideo(filteredVideos[0])
+    }
+  }, [filteredVideos, selectedVideo])
 
   if (hasError) {
     return (

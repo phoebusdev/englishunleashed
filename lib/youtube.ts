@@ -45,7 +45,9 @@ export async function getChannelByHandle(handle: string): Promise<YouTubeChannel
       part: 'id,snippet'
     })
 
-    const response = await fetch(url)
+    const response = await fetch(url, {
+      next: { revalidate: 86400 } // Cache for 24 hours (channel info rarely changes)
+    })
     const data = await response.json() as {
       items?: Array<{
         id: string
@@ -89,8 +91,6 @@ export async function fetchChannelVideos(
     return []
   }
 
-  console.log('Fetching videos for channel:', channelId)
-
   try {
     // First, search for videos in the channel
     const searchUrl = `${API_BASE}/search?` + new URLSearchParams({
@@ -102,7 +102,9 @@ export async function fetchChannelVideos(
       maxResults: maxResults.toString()
     })
 
-    const searchResponse = await fetch(searchUrl)
+    const searchResponse = await fetch(searchUrl, {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    })
     
     if (!searchResponse.ok) {
       console.error('YouTube API error:', searchResponse.status, searchResponse.statusText)
@@ -136,7 +138,9 @@ export async function fetchChannelVideos(
       part: 'snippet,contentDetails,statistics'
     })
 
-    const videosResponse = await fetch(videosUrl)
+    const videosResponse = await fetch(videosUrl, {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    })
     const videosData = await videosResponse.json() as {
       items: Array<{
         id: string
