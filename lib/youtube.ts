@@ -12,6 +12,11 @@ export interface YouTubeVideo {
     width: number
     height: number
   }
+  thumbnails?: {
+    default?: { url: string; width: number; height: number }
+    medium?: { url: string; width: number; height: number }
+    high?: { url: string; width: number; height: number }
+  }
   duration?: string
   viewCount?: string
 }
@@ -148,7 +153,11 @@ export async function fetchChannelVideos(
           title: string
           description: string
           publishedAt: string
-          thumbnails: { high: { url: string; width: number; height: number } }
+          thumbnails: {
+            default?: { url: string; width: number; height: number }
+            medium?: { url: string; width: number; height: number }
+            high?: { url: string; width: number; height: number }
+          }
         }
         contentDetails: { duration: string }
         statistics: { viewCount: string }
@@ -162,7 +171,11 @@ export async function fetchChannelVideos(
         title: string
         description: string
         publishedAt: string
-        thumbnails: { high: { url: string; width: number; height: number } }
+        thumbnails: {
+          default?: { url: string; width: number; height: number }
+          medium?: { url: string; width: number; height: number }
+          high?: { url: string; width: number; height: number }
+        }
       }
       contentDetails: { duration: string }
       statistics: { viewCount: string }
@@ -171,7 +184,8 @@ export async function fetchChannelVideos(
       title: video.snippet.title,
       description: video.snippet.description,
       publishedAt: video.snippet.publishedAt,
-      thumbnail: video.snippet.thumbnails.high,
+      thumbnail: video.snippet.thumbnails.high || video.snippet.thumbnails.medium || video.snippet.thumbnails.default || { url: '', width: 0, height: 0 },
+      thumbnails: video.snippet.thumbnails,
       duration: parseDuration(video.contentDetails.duration),
       viewCount: video.statistics.viewCount
     }))

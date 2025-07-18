@@ -20,6 +20,11 @@ interface EnhancedVideo {
     width: number
     height: number
   }
+  thumbnails?: {
+    default?: { url: string; width: number; height: number }
+    medium?: { url: string; width: number; height: number }
+    high?: { url: string; width: number; height: number }
+  }
   duration?: string
   viewCount?: string
   featured?: boolean
@@ -201,7 +206,7 @@ export default function VideoPageClient({ videos, hasError }: VideoPageClientPro
                     <div className="flex gap-3">
                       <div className="flex-shrink-0 w-24 h-16 bg-gray-200 rounded overflow-hidden relative">
                         <Image
-                          src={video.thumbnail.url}
+                          src={video.thumbnails?.medium?.url || video.thumbnails?.default?.url || video.thumbnail.url}
                           alt={video.title}
                           width={96}
                           height={64}

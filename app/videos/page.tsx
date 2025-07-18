@@ -33,6 +33,7 @@ export default async function VideosPage() {
       relatedProducts: mapping?.relatedProducts || [],
       publishedDate: video.publishedAt,
       thumbnail: video.thumbnail,
+      thumbnails: video.thumbnails,
       duration: video.duration,
       viewCount: video.viewCount,
       featured: mapping?.featured || false,
