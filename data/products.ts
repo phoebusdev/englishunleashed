@@ -32,9 +32,9 @@ export const products: Product[] = [
     ],
     featured: true,
     relatedEpisode: 'Episode #45',
-    gumroadUrl: 'https://englishunleashed.gumroad.com/l/daily-routines',
-    previewVideoId: 'dQw4w9WgXcQ', // Replace with actual preview video ID
-    episodeVideoIds: ['abc123xyz', 'def456uvw'] // Replace with actual episode IDs
+    gumroadUrl: 'https://englishunleashed.gumroad.com/l/daily-routines'
+    // previewVideoId: '', // Add actual preview video ID when available
+    // episodeVideoIds: [] // Add actual episode IDs when available
   },
   {
     id: 'small-talk-mastery',
@@ -54,9 +54,9 @@ export const products: Product[] = [
     ],
     featured: true,
     relatedEpisode: 'Episode #44',
-    gumroadUrl: 'https://englishunleashed.gumroad.com/l/small-talk-mastery',
-    youtubeVideoId: 'videoId123', // Replace with actual video course ID
-    previewVideoId: 'previewId123' // Replace with actual preview ID
+    gumroadUrl: 'https://englishunleashed.gumroad.com/l/small-talk-mastery'
+    // youtubeVideoId: '', // Add actual video course ID when available
+    // previewVideoId: '' // Add actual preview ID when available
   },
   {
     id: 'british-pronunciation-bundle',

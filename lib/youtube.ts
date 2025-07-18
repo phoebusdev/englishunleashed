@@ -148,7 +148,11 @@ export async function fetchChannelVideos(
           title: string
           description: string
           publishedAt: string
-          thumbnails: { high: { url: string; width: number; height: number } }
+          thumbnails: { 
+            high?: { url: string; width: number; height: number }
+            medium?: { url: string; width: number; height: number }
+            default?: { url: string; width: number; height: number }
+          }
         }
         contentDetails: { duration: string }
         statistics: { viewCount: string }
@@ -162,7 +166,11 @@ export async function fetchChannelVideos(
         title: string
         description: string
         publishedAt: string
-        thumbnails: { high: { url: string; width: number; height: number } }
+        thumbnails: { 
+          high?: { url: string; width: number; height: number }
+          medium?: { url: string; width: number; height: number }
+          default?: { url: string; width: number; height: number }
+        }
       }
       contentDetails: { duration: string }
       statistics: { viewCount: string }
@@ -171,7 +179,10 @@ export async function fetchChannelVideos(
       title: video.snippet.title,
       description: video.snippet.description,
       publishedAt: video.snippet.publishedAt,
-      thumbnail: video.snippet.thumbnails.high,
+      thumbnail: video.snippet.thumbnails.high || 
+                 video.snippet.thumbnails.medium || 
+                 video.snippet.thumbnails.default || 
+                 { url: `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`, width: 480, height: 360 },
       duration: parseDuration(video.contentDetails.duration),
       viewCount: video.statistics.viewCount
     }))
