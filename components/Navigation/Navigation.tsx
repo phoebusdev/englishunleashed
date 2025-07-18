@@ -21,7 +21,6 @@ export function Navigation() {
             />
             <div className="flex flex-col items-start">
               <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">English Unleashed</span>
-              <span className="text-xs text-gray-500">The Podcast</span>
             </div>
           </Link>
 
@@ -32,14 +31,6 @@ export function Navigation() {
             <Link href="/videos" className="text-gray-700 hover:text-primary font-medium transition-colors">
               Videos
             </Link>
-            <a 
-              href="https://www.youtube.com/@EnglishPodcastUnleashed" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-gray-700 hover:text-primary font-medium transition-colors"
-            >
-              Podcast
-            </a>
             <Link href="/contact" className="text-gray-700 hover:text-primary font-medium transition-colors">
               Contact
             </Link>
@@ -76,14 +67,6 @@ export function Navigation() {
               >
                 Videos
               </Link>
-              <a 
-                href="https://www.youtube.com/@EnglishPodcastUnleashed" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-primary font-medium transition-colors"
-              >
-                Podcast
-              </a>
               <Link 
                 href="/contact" 
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
