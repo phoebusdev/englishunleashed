@@ -26,8 +26,11 @@ export default async function ShopPage() {
   let hasError = false
   
   try {
-    if (env.YOUTUBE_CHANNEL_ID) {
+    if (env.YOUTUBE_CHANNEL_ID && env.YOUTUBE_API_KEY) {
       youtubeVideos = await fetchChannelVideos(env.YOUTUBE_CHANNEL_ID, 50)
+    } else {
+      console.error('YouTube environment variables are not configured')
+      hasError = true
     }
   } catch (error) {
     console.error('Error fetching YouTube videos for shop:', error)
