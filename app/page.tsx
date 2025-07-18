@@ -26,7 +26,7 @@ export default function Web() {
         <div className="relative mx-auto max-w-7xl px-4 py-20 text-center lg:py-32">
           <div className="mx-auto max-w-3xl">
             <span className="inline-block mb-4 text-sm font-medium text-white/90 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
-              🎧 English Unleashed: The Podcast
+              📚 Premium English Learning Materials
             </span>
             <h1 className="mb-6 text-4xl leading-tight font-bold tracking-tight md:text-5xl xl:text-7xl">
               Learn English<br />with PDFs

@@ -40,14 +40,6 @@ export function Footer() {
               >
                 YouTube
               </a>
-              <a 
-                href="https://podcasts.apple.com/podcast/english-unleashed" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-primary transition-colors"
-              >
-                Podcast
-              </a>
             </div>
           </div>
 
