@@ -1,6 +1,6 @@
 import { env } from 'env.mjs'
-import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
 import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
+import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
 import ShopPageClient from './ShopPageClient'
 
 export const revalidate = 3600 // Revalidate every hour

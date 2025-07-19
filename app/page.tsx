@@ -1,8 +1,7 @@
 import { Metadata } from "next"
-import { Button } from "components/Button/Button"
-import { fetchGumroadProducts } from "lib/gumroad"
-import { fetchChannelVideos } from "lib/youtube"
 import { env } from "env.mjs"
+import { fetchGumroadProducts } from "lib/gumroad"
+import { fetchChannelVideos, type YouTubeVideo } from "lib/youtube"
 import HomePageClient from "./HomePageClient"
 
 export const metadata: Metadata = {
@@ -25,7 +24,7 @@ export default async function Web() {
   const gumroadProducts = await fetchGumroadProducts()
   
   // Fetch latest videos
-  let latestVideos = []
+  let latestVideos: YouTubeVideo[] = []
   try {
     if (env.YOUTUBE_CHANNEL_ID && env.YOUTUBE_API_KEY) {
       const videos = await fetchChannelVideos(env.YOUTUBE_CHANNEL_ID, 6)

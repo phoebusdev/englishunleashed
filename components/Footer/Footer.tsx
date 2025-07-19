@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Button } from 'components/Button/Button'
 
 export function Footer() {
   return (
