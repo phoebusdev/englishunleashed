@@ -7,8 +7,8 @@ let cachedProducts: ProcessedGumroadProduct[] | null = null;
 let cacheTimestamp: number | null = null;
 
 export function cleanProductTitle(title: string): string {
-  // Remove everything after "|" and trim
-  return title.split('|')[0].trim();
+  // Keep the full title, just trim whitespace
+  return title.trim();
 }
 
 export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]> {
@@ -75,25 +75,24 @@ export function matchVideoToGumroadProduct(
   videoTitle: string,
   gumroadProducts: ProcessedGumroadProduct[]
 ): ProcessedGumroadProduct | null {
-  const cleanVideoTitle = cleanProductTitle(videoTitle).toLowerCase();
+  const videoTitleLower = videoTitle.toLowerCase().trim();
   
   return gumroadProducts.find(product => {
-    const productCleanTitle = product.cleanTitle.toLowerCase();
-    const productFullTitle = product.title.toLowerCase();
+    const productTitleLower = product.title.toLowerCase().trim();
     
-    // Try exact match with clean title
-    if (productCleanTitle === cleanVideoTitle) {
+    // Try exact match with full title
+    if (productTitleLower === videoTitleLower) {
       return true;
     }
     
-    // Try match with full title
-    if (productFullTitle.includes(cleanVideoTitle)) {
+    // Try matching if one title contains the other
+    if (productTitleLower.includes(videoTitleLower) || videoTitleLower.includes(productTitleLower)) {
       return true;
     }
     
     // Try partial match (at least 80% of words match)
-    const videoWords = cleanVideoTitle.split(/\s+/);
-    const productWords = productCleanTitle.split(/\s+/);
+    const videoWords = videoTitleLower.split(/\s+/);
+    const productWords = productTitleLower.split(/\s+/);
     const matchingWords = videoWords.filter(word => 
       productWords.some(pWord => pWord.includes(word) || word.includes(pWord))
     );

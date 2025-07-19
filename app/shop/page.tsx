@@ -49,7 +49,7 @@ export default async function ShopPage() {
       
       return {
         id: video.id,
-        title: video.title.replace(/ \| .*$/, ''), // Remove everything after first |
+        title: video.title, // Keep full title
         category: categorizeVideo(video.title),
         price: gumroadProduct.price,
         formattedPrice: gumroadProduct.formattedPrice,
