@@ -35,7 +35,7 @@ export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]>
       throw new Error(`Gumroad API error: ${response.status}`);
     }
 
-    const data: GumroadApiResponse = await response.json();
+    const data = await response.json() as GumroadApiResponse;
 
     if (!data.success) {
       throw new Error('Gumroad API returned success: false');

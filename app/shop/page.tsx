@@ -58,7 +58,7 @@ export default async function ShopPage() {
         fileInfo: gumroadProduct.fileInfo
       }
     })
-    .filter(Boolean) // Remove null entries
+    .filter((pdf): pdf is NonNullable<typeof pdf> => pdf !== null) // Type-safe filter
   
   return <ShopPageClient videoPDFs={videoPDFs} hasError={hasError} />
 }
