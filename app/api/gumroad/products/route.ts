@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchGumroadProducts } from '@/lib/gumroad';
+import { fetchGumroadProducts } from 'lib/gumroad';
 
 export async function GET() {
   try {

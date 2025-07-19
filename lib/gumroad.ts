@@ -1,4 +1,4 @@
-import { GumroadApiResponse, ProcessedGumroadProduct } from '@/types/gumroad';
+import { GumroadApiResponse, ProcessedGumroadProduct } from 'types/gumroad';
 
 const GUMROAD_API_URL = 'https://api.gumroad.com/v2';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
