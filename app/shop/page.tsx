@@ -1,5 +1,6 @@
 import { env } from 'env.mjs'
 import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
+import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
 import ShopPageClient from './ShopPageClient'
 
 export const revalidate = 3600 // Revalidate every hour
@@ -37,12 +38,27 @@ export default async function ShopPage() {
     hasError = true
   }
   
-  // Transform videos into PDF products
-  const videoPDFs = youtubeVideos.map(video => ({
-    id: video.id,
-    title: video.title.replace(/ \| .*$/, ''), // Remove everything after first |
-    category: categorizeVideo(video.title)
-  }))
+  // Fetch Gumroad products
+  const gumroadProducts = await fetchGumroadProducts()
+  
+  // Transform videos into PDF products, only including those with matching Gumroad products
+  const videoPDFs = youtubeVideos
+    .map(video => {
+      const gumroadProduct = matchVideoToGumroadProduct(video.title, gumroadProducts)
+      if (!gumroadProduct) return null
+      
+      return {
+        id: video.id,
+        title: video.title.replace(/ \| .*$/, ''), // Remove everything after first |
+        category: categorizeVideo(video.title),
+        price: gumroadProduct.price,
+        formattedPrice: gumroadProduct.formattedPrice,
+        checkoutUrl: gumroadProduct.checkoutUrl,
+        description: gumroadProduct.description,
+        fileInfo: gumroadProduct.fileInfo
+      }
+    })
+    .filter(Boolean) // Remove null entries
   
   return <ShopPageClient videoPDFs={videoPDFs} hasError={hasError} />
 }

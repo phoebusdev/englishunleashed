@@ -1,6 +1,7 @@
 import { inferVideoCategory, videoMappings } from 'data/video-mappings'
 import { env } from 'env.mjs'
 import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
+import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
 import VideoPageClient from './VideoPageClient'
 
 export const revalidate = 3600 // Revalidate every hour
@@ -22,10 +23,14 @@ export default async function VideosPage() {
     hasError = true
   }
   
+  // Fetch Gumroad products
+  const gumroadProducts = await fetchGumroadProducts()
+  
   // Transform YouTube videos with our mappings
   const enhancedVideos = youtubeVideos.map(video => {
     const mapping = videoMappings[video.id]
     const category = mapping?.category || inferVideoCategory(video.title)
+    const gumroadProduct = matchVideoToGumroadProduct(video.title, gumroadProducts)
     
     return {
       id: video.id,
@@ -39,7 +44,12 @@ export default async function VideosPage() {
       duration: video.duration,
       viewCount: video.viewCount,
       featured: mapping?.featured || false,
-      episodeNumber: mapping?.episodeNumber
+      episodeNumber: mapping?.episodeNumber,
+      gumroadProduct: gumroadProduct ? {
+        price: gumroadProduct.price,
+        formattedPrice: gumroadProduct.formattedPrice,
+        checkoutUrl: gumroadProduct.checkoutUrl
+      } : null
     }
   })
   

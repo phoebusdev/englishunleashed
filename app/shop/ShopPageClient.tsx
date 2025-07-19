@@ -15,6 +15,14 @@ interface VideoPDF {
   id: string
   title: string
   category: 'vocabulary' | 'conversation' | 'pronunciation' | 'business' | 'general'
+  price: number
+  formattedPrice: string
+  checkoutUrl: string
+  description: string
+  fileInfo?: {
+    size: string
+    pages: string
+  }
 }
 
 interface ShopPageClientProps {
@@ -84,16 +92,27 @@ export default function ShopPageClient({ videoPDFs, hasError }: ShopPageClientPr
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{pdf.title}</h3>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-500 capitalize">{pdf.category}</span>
-                      <span className="text-2xl font-bold text-primary">£9.99</span>
+                      <span className="text-2xl font-bold text-primary">{pdf.formattedPrice}</span>
                     </div>
                   </div>
-                  <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                    Master English with this comprehensive PDF guide based on our popular video lesson. Includes exercises and practice materials.
+                  <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+                    {pdf.description}
                   </p>
+                  {pdf.fileInfo && (
+                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-6">
+                      <span>📄 {pdf.fileInfo.pages}</span>
+                      <span>💾 {pdf.fileInfo.size}</span>
+                    </div>
+                  )}
                   <div className="space-y-3">
-                    <button className="w-full justify-center inline-flex items-center rounded-full text-center transition-all duration-200 font-medium shadow-md hover:shadow-lg bg-gradient-primary text-white border-0 hover:opacity-90 hover:scale-[1.02] min-w-36 h-12 text-base py-3 px-6">
-                      Coming Soon
-                    </button>
+                    <a
+                      href={pdf.checkoutUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full justify-center inline-flex items-center rounded-full text-center transition-all duration-200 font-medium shadow-md hover:shadow-lg bg-gradient-primary text-white border-0 hover:opacity-90 hover:scale-[1.02] min-w-36 h-12 text-base py-3 px-6"
+                    >
+                      Buy Now - {pdf.formattedPrice}
+                    </a>
                     <Link
                       href="/videos"
                       className="w-full justify-center inline-flex items-center rounded-full text-center transition-all duration-200 font-medium shadow-md hover:shadow-lg bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 min-w-36 h-12 text-base py-3 px-6"
@@ -102,7 +121,7 @@ export default function ShopPageClient({ videoPDFs, hasError }: ShopPageClientPr
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      Watch Preview
+                      Watch Video
                     </Link>
                   </div>
                 </div>

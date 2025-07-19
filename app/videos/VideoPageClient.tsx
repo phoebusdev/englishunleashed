@@ -24,6 +24,11 @@ interface EnhancedVideo {
   viewCount?: string
   featured?: boolean
   episodeNumber?: number
+  gumroadProduct?: {
+    price: number
+    formattedPrice: string
+    checkoutUrl: string
+  } | null
 }
 
 interface VideoPageClientProps {
@@ -148,6 +153,46 @@ export default function VideoPageClient({ videos, hasError }: VideoPageClientPro
                         ? selectedVideo.description.substring(0, 300) + '...' 
                         : selectedVideo.description}
                     </p>
+                    
+                    {/* PDF Download Section */}
+                    <div className="border-t pt-6 mb-6">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        📄 PDF Learning Materials
+                      </h3>
+                      {selectedVideo.gumroadProduct ? (
+                        <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-gray-900">Download PDF Guide</p>
+                              <p className="text-sm text-gray-600">Full transcript, vocabulary quiz, and exercises</p>
+                            </div>
+                            <a
+                              href={selectedVideo.gumroadProduct.checkoutUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-6 py-3 bg-gradient-primary text-white rounded-full font-medium hover:opacity-90 transition-opacity shadow-md hover:shadow-lg"
+                            >
+                              Get PDF - {selectedVideo.gumroadProduct.formattedPrice}
+                            </a>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-gray-100 rounded-xl p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-gray-900">PDF Guide Coming Soon</p>
+                              <p className="text-sm text-gray-600">We're working on creating a PDF for this video</p>
+                            </div>
+                            <button
+                              disabled
+                              className="px-6 py-3 bg-gray-300 text-gray-500 rounded-full font-medium cursor-not-allowed"
+                            >
+                              Coming Soon
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     
                     {relatedProducts.length > 0 && (
                       <div className="border-t pt-6">
