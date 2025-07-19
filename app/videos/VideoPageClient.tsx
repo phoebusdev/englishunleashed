@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { Button } from 'components/Button/Button'
 import { VideoPlayer } from 'components/VideoPlayer/VideoPlayer'
-import { products } from 'data/products'
 import { formatViewCount, getRelativeTime } from 'lib/youtube'
 
 interface EnhancedVideo {
@@ -51,9 +50,7 @@ export default function VideoPageClient({ videos, hasError }: VideoPageClientPro
     ? videos 
     : videos.filter(v => v.category === selectedCategory)
   
-  const relatedProducts = selectedVideo?.relatedProducts
-    ? products.filter(p => selectedVideo.relatedProducts.includes(p.id))
-    : []
+  // Related products removed - now using Gumroad integration directly
   
   // Update selected video when category changes
   useEffect(() => {
@@ -194,37 +191,6 @@ export default function VideoPageClient({ videos, hasError }: VideoPageClientPro
                       )}
                     </div>
                     
-                    {relatedProducts.length > 0 && (
-                      <div className="border-t pt-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          📚 Related Learning Materials
-                        </h3>
-                        <div className="space-y-3">
-                          {relatedProducts.map((product) => (
-                            <div key={product.id} className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
-                              <div>
-                                <h4 className="font-medium text-gray-900">{product.title}</h4>
-                                <p className="text-sm text-gray-600">{product.price}</p>
-                              </div>
-                              {product.gumroadUrl ? (
-                                <a
-                                  href={product.gumroadUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="px-4 py-2 bg-gradient-primary text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
-                                >
-                                  Buy Now
-                                </a>
-                              ) : (
-                                <Button href={`/shop/${product.id}`} size="sm" intent="primary">
-                                  Learn More
-                                </Button>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               )}
