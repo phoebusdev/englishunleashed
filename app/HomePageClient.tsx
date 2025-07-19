@@ -39,7 +39,7 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
                 Browse PDF Materials
               </Button>
               <Button href="/videos" size="lg" className="bg-white/20 text-white border-2 border-white/50 hover:bg-white/30 backdrop-blur-sm">
-                Watch Free Videos
+                Watch Videos
               </Button>
             </div>
           </div>
@@ -223,11 +223,11 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
             Ready to Improve Your English?
           </h2>
           <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-            Start with our free videos or download a PDF to begin practicing today
+            Watch our videos or download a PDF to begin practicing today
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button href="/videos" intent="secondary" size="lg">
-              Watch Free Videos
+              Watch Videos
             </Button>
             <Button href="/shop" intent="primary" size="lg">
               Get PDF Materials

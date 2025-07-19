@@ -26,7 +26,7 @@ const faqs = [
   },
   {
     question: 'Are there any free resources available?',
-    answer: 'Yes! Our YouTube channel is completely free, plus we offer a comprehensive starter guide PDF at no cost.'
+    answer: 'Yes! Our YouTube channel features free video lessons that you can watch anytime.'
   }
 ]
 
@@ -215,10 +215,10 @@ export default function ContactPage() {
                     <span className="text-primary font-medium text-sm">Shop PDFs →</span>
                   </a>
                   
-                  <a href="#" className="block bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-                    <h4 className="font-semibold text-gray-900 mb-1">Free Starter Guide</h4>
-                    <p className="text-sm text-gray-600 mb-2">Get our free guide with common questions and learning tips</p>
-                    <span className="text-primary font-medium text-sm">Download Free →</span>
+                  <a href="/videos" className="block bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                    <h4 className="font-semibold text-gray-900 mb-1">Video Lessons</h4>
+                    <p className="text-sm text-gray-600 mb-2">Watch our podcast episodes and practice with shadowing</p>
+                    <span className="text-primary font-medium text-sm">Watch Videos →</span>
                   </a>
                 </div>
               </div>

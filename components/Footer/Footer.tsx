@@ -16,8 +16,8 @@ export function Footer() {
             <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" intent="primary">
               Subscribe on YouTube
             </Button>
-            <Button href="#" intent="secondary">
-              Get Free PDF Guide
+            <Button href="/shop" intent="secondary">
+              Browse PDF Materials
             </Button>
           </div>
         </div>
