@@ -5,23 +5,6 @@ export function Footer() {
   return (
     <footer className="bg-gradient-light border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-10 text-center bg-white rounded-2xl p-8 shadow-md">
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">
-            Stay Connected with English Unleashed
-          </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Never miss new lessons and PDF releases from our YouTube channel
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" intent="primary">
-              Subscribe on YouTube
-            </Button>
-            <Button href="/shop" intent="secondary">
-              Browse PDF Materials
-            </Button>
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-2">
             <h4 className="font-bold text-gray-900 mb-2">English Unleashed</h4>
