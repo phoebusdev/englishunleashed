@@ -23,6 +23,7 @@ interface VideoPDF {
     size: string
     pages: string
   }
+  gumroadId: string
 }
 
 interface ShopPageClientProps {
@@ -87,7 +88,7 @@ export default function ShopPageClient({ videoPDFs, hasError }: ShopPageClientPr
           {filteredPDFs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {filteredPDFs.map((pdf) => (
-                <div key={pdf.id} className="bg-white rounded-2xl shadow-lg p-8 transition-all hover:shadow-xl">
+                <div key={pdf.gumroadId} className="bg-white rounded-2xl shadow-lg p-8 transition-all hover:shadow-xl">
                   <div className="mb-4">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{pdf.title}</h3>
                     <div className="flex items-center justify-between">

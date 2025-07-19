@@ -42,10 +42,15 @@ export default async function ShopPage() {
   const gumroadProducts = await fetchGumroadProducts()
   
   // Transform videos into PDF products, only including those with matching Gumroad products
+  const seenGumroadIds = new Set<string>()
   const videoPDFs = youtubeVideos
     .map(video => {
       const gumroadProduct = matchVideoToGumroadProduct(video.title, gumroadProducts)
       if (!gumroadProduct) return null
+      
+      // Skip if we've already added this Gumroad product
+      if (seenGumroadIds.has(gumroadProduct.id)) return null
+      seenGumroadIds.add(gumroadProduct.id)
       
       return {
         id: video.id,
@@ -55,7 +60,8 @@ export default async function ShopPage() {
         formattedPrice: gumroadProduct.formattedPrice,
         checkoutUrl: gumroadProduct.checkoutUrl,
         description: gumroadProduct.description,
-        fileInfo: gumroadProduct.fileInfo
+        fileInfo: gumroadProduct.fileInfo,
+        gumroadId: gumroadProduct.id
       }
     })
     .filter((pdf): pdf is NonNullable<typeof pdf> => pdf !== null) // Type-safe filter
