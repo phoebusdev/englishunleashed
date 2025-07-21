@@ -110,6 +110,11 @@ export async function fetchChannelVideos(
       console.error('YouTube API error:', searchResponse.status, searchResponse.statusText)
       const errorData = await searchResponse.text()
       console.error('Error details:', errorData)
+      
+      // If quota exceeded, return empty array but don't break the build
+      if (searchResponse.status === 403) {
+        console.log('YouTube API quota exceeded - videos will be unavailable temporarily')
+      }
       return []
     }
     
