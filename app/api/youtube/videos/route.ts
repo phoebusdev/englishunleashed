@@ -12,15 +12,6 @@ const CACHE_DURATION = 60 * 60 * 1000 // 1 hour in milliseconds
 
 export async function GET() {
   try {
-    // During build time, always return empty to avoid API calls
-    if (!process.env.VERCEL_URL && process.env.VERCEL) {
-      console.log('Build time detected - returning empty videos')
-      return NextResponse.json({ 
-        videos: [],
-        cached: false,
-        buildTime: true
-      })
-    }
     
     // Check if we have cached data that's less than 1 hour old
     if (videoCache && Date.now() - videoCache.timestamp < CACHE_DURATION) {
