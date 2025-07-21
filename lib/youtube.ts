@@ -65,8 +65,8 @@ export async function getChannelByHandle(handle: string): Promise<YouTubeChannel
       return null
     }
 
+    if (!data.items[0]) return null
     const channel = data.items[0]
-    if (!channel) return null
     
     return {
       id: channel.id,
@@ -103,7 +103,7 @@ export async function fetchChannelVideos(
     })
 
     const searchResponse = await fetch(searchUrl, {
-      next: { revalidate: 3600 } // Cache for 1 hour
+      next: { revalidate: 300 } // Cache for 5 minutes to match page revalidation
     })
     
     if (!searchResponse.ok) {
@@ -139,7 +139,7 @@ export async function fetchChannelVideos(
     })
 
     const videosResponse = await fetch(videosUrl, {
-      next: { revalidate: 3600 } // Cache for 1 hour
+      next: { revalidate: 300 } // Cache for 5 minutes to match page revalidation
     })
     const videosData = await videosResponse.json() as {
       items: Array<{

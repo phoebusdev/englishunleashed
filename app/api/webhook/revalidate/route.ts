@@ -1,19 +1,25 @@
 import crypto from 'crypto';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
-
-// Webhook secret for security (store in environment variable)
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'your-secret-key';
+import { env } from 'env.mjs';
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if webhook secret is configured
+    if (!env.WEBHOOK_SECRET) {
+      return NextResponse.json(
+        { error: 'Webhook endpoint not configured' },
+        { status: 503 }
+      );
+    }
+
     // 1. Verify webhook authenticity
     const signature = request.headers.get('x-webhook-signature');
     const body = await request.text();
     
     // Verify signature (example for HMAC SHA256)
     const expectedSignature = crypto
-      .createHmac('sha256', WEBHOOK_SECRET)
+      .createHmac('sha256', env.WEBHOOK_SECRET)
       .update(body)
       .digest('hex');
     

@@ -1,9 +1,8 @@
 import { revalidatePath } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
-// Only enable in development or with debug flag
-const isDebugEnabled = process.env.NODE_ENV === 'development' || 
-                      process.env.ENABLE_DEBUG_ENDPOINTS === 'true';
+// Only enable in development
+const isDebugEnabled = process.env.NODE_ENV === 'development';
 
 export async function GET() {
   if (!isDebugEnabled) {

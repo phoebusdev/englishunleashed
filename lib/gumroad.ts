@@ -13,12 +13,13 @@ export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]>
   
   if (!accessToken) {
     console.error('[Gumroad] GUMROAD_ACCESS_TOKEN not found in environment variables');
-    console.error('[Gumroad] Available env vars:', Object.keys(process.env).filter(key => key.includes('GUMROAD')));
     return [];
   }
 
   try {
-    console.log('[Gumroad] Fetching products from API...');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Gumroad] Fetching products from API...');
+    }
     
     const response = await fetch(`${GUMROAD_API_URL}/products`, {
       headers: {
@@ -37,7 +38,9 @@ export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]>
       throw new Error('Gumroad API returned success: false');
     }
 
-    console.log(`[Gumroad] Successfully fetched ${data.products.length} products`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Gumroad] Successfully fetched ${data.products.length} products`);
+    }
 
     // Process products
     const processedProducts: ProcessedGumroadProduct[] = data.products
@@ -58,15 +61,12 @@ export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]>
         } : undefined,
       }));
 
-    console.log(`[Gumroad] Processed ${processedProducts.length} published products`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Gumroad] Processed ${processedProducts.length} published products`);
+    }
     return processedProducts;
   } catch (error) {
-    console.error('[Gumroad] Error fetching products:', error);
-    console.error('[Gumroad] Error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      accessTokenLength: accessToken?.length || 0,
-      hasToken: !!accessToken,
-    });
+    console.error('[Gumroad] Error fetching products:', error instanceof Error ? error.message : 'Unknown error');
     return []; // Return empty array on error
   }
 }
