@@ -17,9 +17,7 @@ export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]>
   }
 
   try {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Gumroad] Fetching products from API...');
-    }
+    console.log('[Gumroad] Fetching products from API...');
     
     const response = await fetch(`${GUMROAD_API_URL}/products`, {
       headers: {
@@ -38,9 +36,7 @@ export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]>
       throw new Error('Gumroad API returned success: false');
     }
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[Gumroad] Successfully fetched ${data.products.length} products`);
-    }
+    console.log(`[Gumroad] Successfully fetched ${data.products.length} products`);
 
     // Process products
     const processedProducts: ProcessedGumroadProduct[] = data.products
@@ -61,9 +57,7 @@ export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]>
         } : undefined,
       }));
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[Gumroad] Processed ${processedProducts.length} published products`);
-    }
+    console.log(`[Gumroad] Processed ${processedProducts.length} published products`);
     return processedProducts;
   } catch (error) {
     console.error('[Gumroad] Error fetching products:', error instanceof Error ? error.message : 'Unknown error');

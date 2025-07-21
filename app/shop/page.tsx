@@ -1,7 +1,5 @@
 import { type Metadata } from 'next'
-import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
-import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
-import { env } from 'env.mjs'
+import { fetchGumroadProducts } from 'lib/gumroad'
 import ShopPageClient from './ShopPageClient'
 
 export const metadata: Metadata = {
@@ -33,48 +31,28 @@ function categorizeVideo(title: string): 'vocabulary' | 'conversation' | 'pronun
 }
 
 export default async function ShopPage() {
-  let youtubeVideos: YouTubeVideo[] = []
   let hasError = false
   
-  try {
-    if (env.YOUTUBE_CHANNEL_ID && env.YOUTUBE_API_KEY) {
-      youtubeVideos = await fetchChannelVideos(env.YOUTUBE_CHANNEL_ID, 50)
-    } else {
-      console.error('YouTube environment variables are not configured')
-      hasError = true
-    }
-  } catch (error) {
-    console.error('Error fetching YouTube videos for shop:', error)
+  // Fetch Gumroad products directly
+  const gumroadProducts = await fetchGumroadProducts()
+  
+  if (gumroadProducts.length === 0) {
+    console.error('No Gumroad products found')
     hasError = true
   }
   
-  // Fetch Gumroad products
-  const gumroadProducts = await fetchGumroadProducts()
-  
-  // Transform videos into PDF products, only including those with matching Gumroad products
-  const seenGumroadIds = new Set<string>()
-  const videoPDFs = youtubeVideos
-    .map(video => {
-      const gumroadProduct = matchVideoToGumroadProduct(video.title, gumroadProducts)
-      if (!gumroadProduct) return null
-      
-      // Skip if we've already added this Gumroad product
-      if (seenGumroadIds.has(gumroadProduct.id)) return null
-      seenGumroadIds.add(gumroadProduct.id)
-      
-      return {
-        id: video.id,
-        title: video.title, // Keep full title
-        category: categorizeVideo(video.title),
-        price: gumroadProduct.price,
-        formattedPrice: gumroadProduct.formattedPrice,
-        checkoutUrl: gumroadProduct.checkoutUrl,
-        description: gumroadProduct.description,
-        fileInfo: gumroadProduct.fileInfo,
-        gumroadId: gumroadProduct.id
-      }
-    })
-    .filter((pdf): pdf is NonNullable<typeof pdf> => pdf !== null) // Type-safe filter
+  // Transform Gumroad products into the format expected by ShopPageClient
+  const videoPDFs = gumroadProducts.map(product => ({
+    id: product.id,
+    title: product.title,
+    category: categorizeVideo(product.title),
+    price: product.price,
+    formattedPrice: product.formattedPrice,
+    checkoutUrl: product.checkoutUrl,
+    description: product.description,
+    fileInfo: product.fileInfo,
+    gumroadId: product.id
+  }))
   
   return <ShopPageClient videoPDFs={videoPDFs} hasError={hasError} />
 }

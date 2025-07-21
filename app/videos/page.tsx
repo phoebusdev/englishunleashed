@@ -36,11 +36,23 @@ export default async function VideosPage() {
   // Fetch Gumroad products
   const gumroadProducts = await fetchGumroadProducts()
   
+  // If we have Gumroad products but no matching, use the first product as a fallback
+  const fallbackProduct = gumroadProducts.length > 0 ? gumroadProducts[0] : null
+  
   // Transform YouTube videos with our mappings
   const enhancedVideos = youtubeVideos.map(video => {
     const mapping = videoMappings[video.id]
     const category = mapping?.category || inferVideoCategory(video.title)
-    const gumroadProduct = matchVideoToGumroadProduct(video.title, gumroadProducts)
+    let gumroadProduct = matchVideoToGumroadProduct(video.title, gumroadProducts)
+    
+    // If no match found and we have products, use a product based on category
+    if (!gumroadProduct && gumroadProducts.length > 0 && fallbackProduct) {
+      // Try to find a product that matches the video category
+      const categoryProduct = gumroadProducts.find(p => 
+        p.title.toLowerCase().includes(category)
+      )
+      gumroadProduct = categoryProduct || fallbackProduct
+    }
     
     return {
       id: video.id,
