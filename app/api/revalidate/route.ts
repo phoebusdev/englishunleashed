@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,18 +17,13 @@ export async function POST(request: NextRequest) {
     await revalidatePath('/', 'layout');
     await revalidatePath('/shop');
     await revalidatePath('/videos');
-    
-    // Clear Gumroad cache if needed
-    if (global.gumroadCache) {
-      global.gumroadCache = undefined;
-    }
 
     return NextResponse.json({
       revalidated: true,
       timestamp: new Date().toISOString()
     });
     
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to revalidate' },
       { status: 500 }

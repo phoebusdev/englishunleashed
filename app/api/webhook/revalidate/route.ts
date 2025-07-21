@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath, revalidateTag } from 'next/cache';
 import crypto from 'crypto';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Webhook secret for security (store in environment variable)
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'your-secret-key';
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Parse webhook payload
-    const payload = JSON.parse(body);
+    const payload = JSON.parse(body) as { event?: string };
     
     // 3. Handle different webhook events
     switch (payload.event) {
