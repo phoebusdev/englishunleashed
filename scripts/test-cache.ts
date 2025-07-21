@@ -81,7 +81,7 @@ async function testManualInvalidation() {
 
     if (response.ok) {
       console.log(`${GREEN}✓ Manual cache invalidation successful!${RESET}`);
-      const data = await response.json();
+      const data = await response.json() as { timestamp?: string };
       console.log(`   Timestamp: ${data.timestamp}`);
     } else {
       console.log(`${RED}❌ Manual invalidation failed: ${response.status}${RESET}`);

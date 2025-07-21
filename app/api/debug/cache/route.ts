@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { action } = await request.json();
+  const { action } = await request.json() as { action?: string };
 
   switch (action) {
     case 'clear-all':
