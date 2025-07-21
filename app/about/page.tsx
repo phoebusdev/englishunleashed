@@ -44,6 +44,17 @@ const philosophyItems = [
   }
 ]
 
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'About',
+  description: 'Learn about English Unleashed - your premium source for English learning materials, podcast transcripts, and conversation practice resources.',
+  openGraph: {
+    title: 'About English Unleashed',
+    description: 'Discover how English Unleashed helps learners master daily English conversations through podcasts, PDFs, and practical exercises.',
+  },
+}
+
 export default function AboutPage() {
   return (
     <>

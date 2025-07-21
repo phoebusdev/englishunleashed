@@ -1,8 +1,18 @@
+import { Metadata } from 'next'
 import { inferVideoCategory, videoMappings } from 'data/video-mappings'
 import { env } from 'env.mjs'
 import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
 import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
 import VideoPageClient from './VideoPageClient'
+
+export const metadata: Metadata = {
+  title: 'English Learning Videos',
+  description: 'Watch free English lessons, podcast episodes, and conversation practice videos. Learn vocabulary, pronunciation, and daily English expressions.',
+  openGraph: {
+    title: 'English Learning Videos | English Unleashed',
+    description: 'Free English video lessons covering vocabulary, pronunciation, shadowing exercises, and real conversation practice.',
+  },
+}
 
 export const revalidate = 300 // Revalidate every 5 minutes
 

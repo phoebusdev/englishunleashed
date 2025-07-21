@@ -1,0 +1,11 @@
+{
+  "env": {
+    "ENABLE_DEBUG_ENDPOINTS": "true",
+    "NEXT_PUBLIC_ENVIRONMENT": "staging"
+  },
+  "build": {
+    "env": {
+      "ENABLE_DEBUG_ENDPOINTS": "true"
+    }
+  }
+}

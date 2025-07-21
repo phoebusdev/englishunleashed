@@ -1,7 +1,17 @@
+import { Metadata } from 'next'
 import { env } from 'env.mjs'
 import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
 import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
 import ShopPageClient from './ShopPageClient'
+
+export const metadata: Metadata = {
+  title: 'Shop English Learning PDFs',
+  description: 'Download premium English learning PDFs including podcast transcripts, vocabulary guides, shadowing exercises, and conversation practice materials.',
+  openGraph: {
+    title: 'Shop English Learning PDFs | English Unleashed',
+    description: 'Premium English learning materials to complement our YouTube lessons. Instant PDF downloads for vocabulary, pronunciation, and conversation practice.',
+  },
+}
 
 export const revalidate = 300 // Revalidate every 5 minutes
 
