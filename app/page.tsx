@@ -1,7 +1,6 @@
 import { type Metadata } from "next"
 import { fetchGumroadProducts } from "lib/gumroad"
-import { fetchChannelVideos, type YouTubeVideo } from "lib/youtube"
-import { env } from "env.mjs"
+import { type YouTubeVideo } from "lib/youtube"
 import HomePageClient from "./HomePageClient"
 
 export const metadata: Metadata = {
@@ -23,37 +22,28 @@ export default async function Web() {
   // Fetch actual Gumroad products
   const gumroadProducts = await fetchGumroadProducts()
   
-  // Fetch latest videos
+  // Fetch latest videos using the cached API endpoint
   let latestVideos: YouTubeVideo[] = []
   try {
-    if (env.YOUTUBE_CHANNEL_ID && env.YOUTUBE_API_KEY) {
-      const videos = await fetchChannelVideos(env.YOUTUBE_CHANNEL_ID, 6)
-      latestVideos = videos
-      
-      // If no videos returned (possibly due to quota), try the cached API
-      if (latestVideos.length === 0) {
-        console.log('No videos from direct API, trying cached endpoint...')
-        try {
-          const baseUrl = process.env.VERCEL_URL 
-            ? `https://${process.env.VERCEL_URL}` 
-            : 'http://localhost:3000'
-          const response = await fetch(`${baseUrl}/api/youtube/videos`, {
-            cache: 'no-store'
-          })
-          if (response.ok) {
-            const data = await response.json() as { 
-              videos: YouTubeVideo[], 
-              cached: boolean, 
-              cacheAge?: number 
-            }
-            latestVideos = (data.videos || []).slice(0, 6) // Get only first 6
-            if (data.cached) {
-              console.log(`Using cached videos (${data.cacheAge} minutes old)`)
-            }
-          }
-        } catch (cacheError) {
-          console.error('Error fetching from cache API:', cacheError)
-        }
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000'
+    const response = await fetch(`${baseUrl}/api/youtube/videos`, {
+      next: { revalidate: 300 } // Cache for 5 minutes
+    })
+    if (response.ok) {
+      const data = await response.json() as { 
+        videos: YouTubeVideo[], 
+        cached: boolean, 
+        cacheAge?: number,
+        buildTime?: boolean 
+      }
+      latestVideos = (data.videos || []).slice(0, 6) // Get only first 6
+      if (data.cached) {
+        console.log(`Using cached videos (${data.cacheAge} minutes old)`)
+      }
+      if (data.buildTime) {
+        console.log('Build time - videos will load at runtime')
       }
     }
   } catch (error) {

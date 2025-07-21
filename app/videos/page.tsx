@@ -1,8 +1,7 @@
 import { type Metadata } from 'next'
 import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
-import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
+import { type YouTubeVideo } from 'lib/youtube'
 import { inferVideoCategory, videoMappings } from 'data/video-mappings'
-import { env } from 'env.mjs'
 import VideoPageClient from './VideoPageClient'
 
 export const metadata: Metadata = {
@@ -21,41 +20,31 @@ export default async function VideosPage() {
   let youtubeVideos: YouTubeVideo[] = []
   let hasError = false
   
+  // Always use the cached API endpoint to avoid direct API calls during build
   try {
-    if (env.YOUTUBE_CHANNEL_ID && env.YOUTUBE_API_KEY) {
-      youtubeVideos = await fetchChannelVideos(env.YOUTUBE_CHANNEL_ID, 50)
-      
-      // If no videos returned (possibly due to quota), try the cached API
-      if (youtubeVideos.length === 0) {
-        console.log('No videos from direct API, trying cached endpoint...')
-        try {
-          const baseUrl = process.env.VERCEL_URL 
-            ? `https://${process.env.VERCEL_URL}` 
-            : 'http://localhost:3000'
-          const response = await fetch(`${baseUrl}/api/youtube/videos`, {
-            cache: 'no-store'
-          })
-          if (response.ok) {
-            const data = await response.json() as { 
-              videos: YouTubeVideo[], 
-              cached: boolean, 
-              cacheAge?: number 
-            }
-            youtubeVideos = data.videos || []
-            if (data.cached) {
-              console.log(`Using cached videos (${data.cacheAge} minutes old)`)
-            }
-          }
-        } catch (cacheError) {
-          console.error('Error fetching from cache API:', cacheError)
-        }
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000'
+    const response = await fetch(`${baseUrl}/api/youtube/videos`, {
+      next: { revalidate: 300 } // Cache for 5 minutes
+    })
+    if (response.ok) {
+      const data = await response.json() as { 
+        videos: YouTubeVideo[], 
+        cached: boolean, 
+        cacheAge?: number,
+        buildTime?: boolean 
       }
-    } else {
-      console.error('YouTube environment variables are not configured')
-      hasError = true
+      youtubeVideos = data.videos || []
+      if (data.cached) {
+        console.log(`Using cached videos (${data.cacheAge} minutes old)`)
+      }
+      if (data.buildTime) {
+        console.log('Build time - videos will load at runtime')
+      }
     }
   } catch (error) {
-    console.error('Error fetching YouTube videos:', error)
+    console.error('Error fetching videos:', error)
     hasError = true
   }
   
