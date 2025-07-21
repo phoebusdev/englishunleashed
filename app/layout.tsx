@@ -2,6 +2,7 @@ import { type Metadata } from "next"
 import { Footer } from "components/Footer/Footer"
 import { Navigation } from "components/Navigation/Navigation"
 import "styles/tailwind.css"
+import "./animations.css"
 import { ThemeProvider } from "./providers"
 
 export const metadata: Metadata = {

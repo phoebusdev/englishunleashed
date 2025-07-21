@@ -23,10 +23,10 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
         <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="relative mx-auto max-w-7xl px-4 py-20 text-center lg:py-32">
           <div className="mx-auto max-w-3xl">
-            <span className="inline-block mb-4 text-sm font-medium text-white/90 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+            <span className="inline-block mb-4 text-sm font-medium text-white/90 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm animate-fade-in">
               🎧 Learn English with Podcast + PDFs
             </span>
-            <h1 className="mb-6 text-4xl leading-tight font-bold tracking-tight md:text-5xl xl:text-7xl">
+            <h1 className="mb-6 text-4xl leading-tight font-bold tracking-tight md:text-5xl xl:text-7xl animate-fade-in-up" style={{animationDelay: '0.1s'}}>
               Master English with<br />
               <span className="text-yellow-300">Shadowing Practice</span>
             </h1>
@@ -61,7 +61,7 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               {featuredProducts.map((product) => (
-                <div key={product.id} className="bg-white rounded-2xl shadow-lg p-8 transition-all hover:shadow-xl">
+                <div key={product.id} className="bg-white rounded-2xl shadow-premium p-8 transition-all-premium hover-lift hover-shadow-lg border border-gray-100 animate-fade-in-up">
                   <div className="mb-4">
                     <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{product.cleanTitle}</h3>
                     <div className="flex items-center justify-between mb-4">

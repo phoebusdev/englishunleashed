@@ -115,7 +115,7 @@ export default function ContactPage() {
                         required
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all-premium shadow-sm hover:shadow-premium focus:shadow-premium"
                       />
                     </div>
                     
@@ -130,7 +130,7 @@ export default function ContactPage() {
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all-premium shadow-sm hover:shadow-premium focus:shadow-premium"
                       />
                     </div>
                     
@@ -145,7 +145,7 @@ export default function ContactPage() {
                         required
                         value={formData.subject}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all-premium shadow-sm hover:shadow-premium focus:shadow-premium"
                       />
                     </div>
                     
@@ -159,7 +159,7 @@ export default function ContactPage() {
                         required
                         value={formData.category}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all-premium shadow-sm hover:shadow-premium focus:shadow-premium"
                       >
                         <option value="">Select a category</option>
                         {categories.map((cat) => (
@@ -180,7 +180,7 @@ export default function ContactPage() {
                         minLength={10}
                         value={formData.message}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all-premium shadow-sm hover:shadow-premium focus:shadow-premium"
                       ></textarea>
                     </div>
                     

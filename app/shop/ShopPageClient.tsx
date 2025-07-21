@@ -62,10 +62,10 @@ export default function ShopPageClient({ videoPDFs, hasError }: ShopPageClientPr
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
+                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all-premium transform ${
                     selectedCategory === category.id
-                      ? 'bg-gradient-primary text-white shadow-lg'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 shadow-md'
+                      ? 'bg-gradient-primary text-white shadow-premium-lg scale-105'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 shadow-premium hover:shadow-premium-lg hover:scale-[1.02] border border-gray-200'
                   }`}
                 >
                   {category.name}
@@ -88,7 +88,7 @@ export default function ShopPageClient({ videoPDFs, hasError }: ShopPageClientPr
           {filteredPDFs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {filteredPDFs.map((pdf) => (
-                <div key={pdf.gumroadId} className="bg-white rounded-2xl shadow-lg p-8 transition-all hover:shadow-xl">
+                <div key={pdf.gumroadId} className="bg-white rounded-2xl shadow-premium p-8 transition-all-premium hover-lift hover-shadow-lg border border-gray-100">
                   <div className="mb-4">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{pdf.title}</h3>
                     <div className="flex items-center justify-between">
