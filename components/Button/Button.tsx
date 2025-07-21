@@ -52,6 +52,8 @@ const button = cva(
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLAnchorElement>, VariantProps<typeof button> {
   underline?: boolean
   href: string
+  target?: string
+  rel?: string
 }
 
 export function Button({ className, intent, size, underline, ...props }: ButtonProps) {

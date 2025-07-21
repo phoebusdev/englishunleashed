@@ -38,7 +38,7 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
               <Button href="/shop" intent="secondary" size="lg" className="bg-white text-gray-800 hover:bg-gray-100">
                 Browse PDF Materials
               </Button>
-              <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" size="lg" className="bg-white/20 text-white border-2 border-white/50 hover:bg-white/30 backdrop-blur-sm">
+              <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" rel="noopener noreferrer" size="lg" className="bg-white/20 text-white border-2 border-white/50 hover:bg-white/30 backdrop-blur-sm">
                 Watch Videos
               </Button>
             </div>
@@ -141,7 +141,7 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
                   </div>
                 </div>
                 <div className="mt-8">
-                  <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" intent="primary" size="lg">
+                  <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" rel="noopener noreferrer" intent="primary" size="lg">
                     Watch All Episodes
                   </Button>
                 </div>
@@ -228,7 +228,7 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
             Watch our videos or download a PDF to begin practicing today
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" intent="secondary" size="lg">
+            <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" rel="noopener noreferrer" intent="secondary" size="lg">
               Watch Videos
             </Button>
             <Button href="/shop" intent="primary" size="lg">
