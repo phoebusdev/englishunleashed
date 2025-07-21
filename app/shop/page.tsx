@@ -1,6 +1,5 @@
 import { type Metadata } from 'next'
 import { fetchGumroadProducts } from 'lib/gumroad'
-import { getVideoIdForProduct, getYouTubeVideoUrl, getYouTubeChannelUrl } from 'data/product-video-mappings'
 import ShopPageClient from './ShopPageClient'
 
 export const metadata: Metadata = {
@@ -43,23 +42,17 @@ export default async function ShopPage() {
   }
   
   // Transform Gumroad products into the format expected by ShopPageClient
-  const videoPDFs = gumroadProducts.map(product => {
-    const videoId = getVideoIdForProduct(product.title)
-    const videoUrl = videoId ? getYouTubeVideoUrl(videoId) : getYouTubeChannelUrl()
-    
-    return {
-      id: product.id,
-      title: product.title,
-      category: categorizeVideo(product.title),
-      price: product.price,
-      formattedPrice: product.formattedPrice,
-      checkoutUrl: product.checkoutUrl,
-      description: product.description,
-      fileInfo: product.fileInfo,
-      gumroadId: product.id,
-      videoUrl: videoUrl
-    }
-  })
+  const videoPDFs = gumroadProducts.map(product => ({
+    id: product.id,
+    title: product.title,
+    category: categorizeVideo(product.title),
+    price: product.price,
+    formattedPrice: product.formattedPrice,
+    checkoutUrl: product.checkoutUrl,
+    description: product.description,
+    fileInfo: product.fileInfo,
+    gumroadId: product.id
+  }))
   
   return <ShopPageClient videoPDFs={videoPDFs} hasError={hasError} />
 }

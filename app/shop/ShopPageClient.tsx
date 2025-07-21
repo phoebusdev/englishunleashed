@@ -23,7 +23,6 @@ interface VideoPDF {
     pages: string
   }
   gumroadId: string
-  videoUrl: string
 }
 
 interface ShopPageClientProps {
@@ -115,7 +114,7 @@ export default function ShopPageClient({ videoPDFs, hasError }: ShopPageClientPr
                       Buy Now - {pdf.formattedPrice}
                     </a>
                     <a
-                      href={pdf.videoUrl}
+                      href="https://www.youtube.com/@EnglishPodcastUnleashed"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full justify-center inline-flex items-center rounded-full text-center transition-all duration-200 font-medium shadow-md hover:shadow-lg bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 min-w-36 h-12 text-base py-3 px-6"
@@ -124,7 +123,7 @@ export default function ShopPageClient({ videoPDFs, hasError }: ShopPageClientPr
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      Watch Video
+                      Watch Videos
                     </a>
                   </div>
                 </div>
