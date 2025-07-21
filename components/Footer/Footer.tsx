@@ -50,6 +50,7 @@ export function Footer() {
               <li><Link href="/about" className="text-sm text-gray-600 hover:text-primary transition-colors">About</Link></li>
               <li><Link href="/videos" className="text-sm text-gray-600 hover:text-primary transition-colors">Videos</Link></li>
               <li><Link href="/contact" className="text-sm text-gray-600 hover:text-primary transition-colors">Contact</Link></li>
+              <li><a href="mailto:info@englishunleashed.com" className="text-sm text-gray-600 hover:text-primary transition-colors">info@englishunleashed.com</a></li>
               <li><Link href="/faq" className="text-sm text-gray-600 hover:text-primary transition-colors">FAQ</Link></li>
               <li><Link href="/privacy" className="text-sm text-gray-600 hover:text-primary transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms" className="text-sm text-gray-600 hover:text-primary transition-colors">Terms of Service</Link></li>

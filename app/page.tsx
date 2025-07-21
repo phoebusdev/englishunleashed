@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
 }
 
-export const revalidate = 3600 // Revalidate every hour
+export const revalidate = 300 // Revalidate every 5 minutes
 
 export default async function Web() {
   // Fetch actual Gumroad products

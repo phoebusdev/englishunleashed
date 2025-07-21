@@ -4,7 +4,7 @@ import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
 import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
 import VideoPageClient from './VideoPageClient'
 
-export const revalidate = 3600 // Revalidate every hour
+export const revalidate = 300 // Revalidate every 5 minutes
 
 export default async function VideosPage() {
   // Fetch real videos from YouTube

@@ -3,7 +3,7 @@ import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
 import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
 import ShopPageClient from './ShopPageClient'
 
-export const revalidate = 3600 // Revalidate every hour
+export const revalidate = 300 // Revalidate every 5 minutes
 
 // Function to categorize videos based on their title
 function categorizeVideo(title: string): 'vocabulary' | 'conversation' | 'pronunciation' | 'business' | 'general' {
