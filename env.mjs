@@ -10,6 +10,7 @@ export const env = createEnv({
     YOUTUBE_API_KEY: z.string().optional(),
     YOUTUBE_CHANNEL_ID: z.string().optional(),
     YOUTUBE_CHANNEL_HANDLE: z.string().optional(),
+    GUMROAD_ACCESS_TOKEN: z.string().optional(),
   },
   client: {},
   runtimeEnv: {
@@ -17,5 +18,6 @@ export const env = createEnv({
     YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
     YOUTUBE_CHANNEL_ID: process.env.YOUTUBE_CHANNEL_ID,
     YOUTUBE_CHANNEL_HANDLE: process.env.YOUTUBE_CHANNEL_HANDLE,
+    GUMROAD_ACCESS_TOKEN: process.env.GUMROAD_ACCESS_TOKEN,
   },
 })

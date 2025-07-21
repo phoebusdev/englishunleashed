@@ -1,10 +1,7 @@
 import { type GumroadApiResponse, type ProcessedGumroadProduct } from 'types/gumroad';
+import { env } from 'env.mjs';
 
 const GUMROAD_API_URL = 'https://api.gumroad.com/v2';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-let cachedProducts: ProcessedGumroadProduct[] | null = null;
-let cacheTimestamp: number | null = null;
 
 export function cleanProductTitle(title: string): string {
   // Keep the full title, just trim whitespace
@@ -12,27 +9,26 @@ export function cleanProductTitle(title: string): string {
 }
 
 export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]> {
-  // Check cache
-  if (cachedProducts && cacheTimestamp && Date.now() - cacheTimestamp < CACHE_DURATION) {
-    return cachedProducts;
-  }
-
-  const accessToken = process.env.GUMROAD_ACCESS_TOKEN;
+  const accessToken = env.GUMROAD_ACCESS_TOKEN;
   
   if (!accessToken) {
-    console.error('GUMROAD_ACCESS_TOKEN not found in environment variables');
+    console.error('[Gumroad] GUMROAD_ACCESS_TOKEN not found in environment variables');
+    console.error('[Gumroad] Available env vars:', Object.keys(process.env).filter(key => key.includes('GUMROAD')));
     return [];
   }
 
   try {
+    console.log('[Gumroad] Fetching products from API...');
+    
     const response = await fetch(`${GUMROAD_API_URL}/products`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
       },
+      next: { revalidate: 300 }, // Cache for 5 minutes, same as ISR
     });
 
     if (!response.ok) {
-      throw new Error(`Gumroad API error: ${response.status}`);
+      throw new Error(`Gumroad API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json() as GumroadApiResponse;
@@ -40,6 +36,8 @@ export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]>
     if (!data.success) {
       throw new Error('Gumroad API returned success: false');
     }
+
+    console.log(`[Gumroad] Successfully fetched ${data.products.length} products`);
 
     // Process products
     const processedProducts: ProcessedGumroadProduct[] = data.products
@@ -60,14 +58,16 @@ export async function fetchGumroadProducts(): Promise<ProcessedGumroadProduct[]>
         } : undefined,
       }));
 
-    // Update cache
-    cachedProducts = processedProducts;
-    cacheTimestamp = Date.now();
-
+    console.log(`[Gumroad] Processed ${processedProducts.length} published products`);
     return processedProducts;
   } catch (error) {
-    console.error('Error fetching Gumroad products:', error);
-    return cachedProducts || []; // Return cached data if available
+    console.error('[Gumroad] Error fetching products:', error);
+    console.error('[Gumroad] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      accessTokenLength: accessToken?.length || 0,
+      hasToken: !!accessToken,
+    });
+    return []; // Return empty array on error
   }
 }
 
