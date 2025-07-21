@@ -20,32 +20,35 @@ export default async function VideosPage() {
   let youtubeVideos: YouTubeVideo[] = []
   let hasError = false
   
-  // Always use the cached API endpoint to avoid direct API calls during build
-  try {
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : 'http://localhost:3000'
-    const response = await fetch(`${baseUrl}/api/youtube/videos`, {
-      next: { revalidate: 300 } // Cache for 5 minutes
-    })
-    if (response.ok) {
-      const data = await response.json() as { 
-        videos: YouTubeVideo[], 
-        cached: boolean, 
-        cacheAge?: number,
-        buildTime?: boolean 
+  // Skip all API calls during build time
+  const isBuildTime = process.env.NODE_ENV === 'production' && !process.env.VERCEL_URL
+  
+  if (!isBuildTime) {
+    try {
+      const baseUrl = process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : 'http://localhost:3000'
+      const response = await fetch(`${baseUrl}/api/youtube/videos`, {
+        next: { revalidate: 300 } // Cache for 5 minutes
+      })
+      if (response.ok) {
+        const data = await response.json() as { 
+          videos: YouTubeVideo[], 
+          cached: boolean, 
+          cacheAge?: number,
+          buildTime?: boolean 
+        }
+        youtubeVideos = data.videos || []
+        if (data.cached) {
+          console.log(`Using cached videos (${data.cacheAge} minutes old)`)
+        }
       }
-      youtubeVideos = data.videos || []
-      if (data.cached) {
-        console.log(`Using cached videos (${data.cacheAge} minutes old)`)
-      }
-      if (data.buildTime) {
-        console.log('Build time - videos will load at runtime')
-      }
+    } catch (error) {
+      console.error('Error fetching videos:', error)
+      hasError = true
     }
-  } catch (error) {
-    console.error('Error fetching videos:', error)
-    hasError = true
+  } else {
+    console.log('Build time - skipping video fetch')
   }
   
   // Fetch Gumroad products

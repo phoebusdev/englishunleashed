@@ -22,32 +22,35 @@ export default async function Web() {
   // Fetch actual Gumroad products
   const gumroadProducts = await fetchGumroadProducts()
   
-  // Fetch latest videos using the cached API endpoint
+  // Fetch latest videos - skip during build time
   let latestVideos: YouTubeVideo[] = []
-  try {
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : 'http://localhost:3000'
-    const response = await fetch(`${baseUrl}/api/youtube/videos`, {
-      next: { revalidate: 300 } // Cache for 5 minutes
-    })
-    if (response.ok) {
-      const data = await response.json() as { 
-        videos: YouTubeVideo[], 
-        cached: boolean, 
-        cacheAge?: number,
-        buildTime?: boolean 
+  const isBuildTime = process.env.NODE_ENV === 'production' && !process.env.VERCEL_URL
+  
+  if (!isBuildTime) {
+    try {
+      const baseUrl = process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : 'http://localhost:3000'
+      const response = await fetch(`${baseUrl}/api/youtube/videos`, {
+        next: { revalidate: 300 } // Cache for 5 minutes
+      })
+      if (response.ok) {
+        const data = await response.json() as { 
+          videos: YouTubeVideo[], 
+          cached: boolean, 
+          cacheAge?: number,
+          buildTime?: boolean 
+        }
+        latestVideos = (data.videos || []).slice(0, 6) // Get only first 6
+        if (data.cached) {
+          console.log(`Using cached videos (${data.cacheAge} minutes old)`)
+        }
       }
-      latestVideos = (data.videos || []).slice(0, 6) // Get only first 6
-      if (data.cached) {
-        console.log(`Using cached videos (${data.cacheAge} minutes old)`)
-      }
-      if (data.buildTime) {
-        console.log('Build time - videos will load at runtime')
-      }
+    } catch (error) {
+      console.error('Error fetching videos for homepage:', error)
     }
-  } catch (error) {
-    console.error('Error fetching videos for homepage:', error)
+  } else {
+    console.log('Build time - skipping video fetch for homepage')
   }
   
   return <HomePageClient gumroadProducts={gumroadProducts} latestVideos={latestVideos} />
