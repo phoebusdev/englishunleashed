@@ -85,5 +85,5 @@ export async function GET() {
   }
 }
 
-// Revalidate every 5 minutes
-export const revalidate = 300
+// Force dynamic rendering to prevent API calls during build
+export const dynamic = 'force-dynamic'
