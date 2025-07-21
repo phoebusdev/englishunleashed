@@ -1,9 +1,17 @@
 import { type Metadata } from 'next'
-import { unstable_noStore as noStore } from 'next/cache'
 import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
-import { type YouTubeVideo } from 'lib/youtube'
+import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
 import { inferVideoCategory, videoMappings } from 'data/video-mappings'
 import VideoPageClient from './VideoPageClient'
+import { env } from 'env.mjs'
+
+// Simple in-memory cache for videos to handle quota issues
+let videoCache: {
+  data: YouTubeVideo[]
+  timestamp: number
+} | null = null
+
+const CACHE_DURATION = 60 * 60 * 1000 // 1 hour
 
 export const metadata: Metadata = {
   title: 'English Learning Videos',
@@ -14,39 +22,48 @@ export const metadata: Metadata = {
   },
 }
 
+// This page uses dynamic rendering to fetch videos at request time
+export const dynamic = 'force-dynamic'
+
 export default async function VideosPage() {
-  // Opt out of static rendering
-  noStore()
-  
-  // Fetch real videos from YouTube
+  // Fetch real videos from YouTube directly (not through API route)
   let youtubeVideos: YouTubeVideo[] = []
   let hasError = false
   
   try {
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : 'http://localhost:3000'
-    const response = await fetch(`${baseUrl}/api/youtube/videos`, {
-      next: { revalidate: 300 } // Cache for 5 minutes
-    })
-    if (response.ok) {
-      const data = await response.json() as { 
-        videos: YouTubeVideo[], 
-        cached: boolean, 
-        cacheAge?: number,
-        buildTime?: boolean 
-      }
-      youtubeVideos = data.videos || []
-      if (data.cached) {
-        console.log(`Using cached videos (${data.cacheAge} minutes old)`)
+    if (env.YOUTUBE_CHANNEL_ID) {
+      // Check cache first
+      if (videoCache && Date.now() - videoCache.timestamp < CACHE_DURATION) {
+        console.log('Using cached videos from memory')
+        youtubeVideos = videoCache.data
+      } else {
+        // Fetch fresh data
+        const freshVideos = await fetchChannelVideos(env.YOUTUBE_CHANNEL_ID, 50)
+        if (freshVideos.length > 0) {
+          // Update cache
+          videoCache = {
+            data: freshVideos,
+            timestamp: Date.now()
+          }
+          youtubeVideos = freshVideos
+        } else if (videoCache) {
+          // If fetch failed but we have cache, use it
+          console.log('Using stale cache due to fetch failure')
+          youtubeVideos = videoCache.data
+        }
       }
     } else {
-      console.error('YouTube API response not OK:', response.status, response.statusText)
-      hasError = true
+      console.warn('YouTube channel ID not configured')
     }
   } catch (error) {
     console.error('Error fetching videos:', error)
     hasError = true
+    // Use cache if available
+    if (videoCache) {
+      console.log('Using cached videos due to error')
+      youtubeVideos = videoCache.data
+      hasError = false // We have data, so don't show error
+    }
   }
   
   // Fetch Gumroad products
