@@ -1,7 +1,7 @@
-import { Metadata } from 'next'
-import { env } from 'env.mjs'
+import { type Metadata } from 'next'
 import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
 import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
+import { env } from 'env.mjs'
 import ShopPageClient from './ShopPageClient'
 
 export const metadata: Metadata = {

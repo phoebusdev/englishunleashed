@@ -1,4 +1,4 @@
-import * as fs from "fs"
+import { globalImportOrderRule, globalTypeScriptRules, nextJsRules } from "../../../.eslintrc.global.mjs"
 
 // https://github.com/francoismassart/eslint-plugin-tailwindcss/pull/381
 // import eslintPluginTailwindcss from "eslint-plugin-tailwindcss"
@@ -23,6 +23,14 @@ const config = typescriptEslint.config(
   {
     ignores: eslintIgnore,
   },
+  {
+    languageOptions: {
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
   ...eslintPluginStorybook.configs["flat/recommended"],
   //  https://github.com/francoismassart/eslint-plugin-tailwindcss/pull/381
   // ...eslintPluginTailwindcss.configs["flat/recommended"],
@@ -31,10 +39,6 @@ const config = typescriptEslint.config(
   {
     plugins: {
       "@next/next": eslintPluginNext,
-    },
-    rules: {
-      ...eslintPluginNext.configs.recommended.rules,
-      ...eslintPluginNext.configs["core-web-vitals"].rules,
     },
   },
   {
@@ -49,60 +53,14 @@ const config = typescriptEslint.config(
       },
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-        },
-      ],
-      "sort-imports": [
-        "error",
-        {
-          ignoreCase: true,
-          ignoreDeclarationSort: true,
-        },
-      ],
-      "import/order": [
-        "warn",
-        {
-          groups: ["external", "builtin", "internal", "sibling", "parent", "index"],
-          pathGroups: [
-            ...getDirectoriesToSort().map((singleDir) => ({
-              pattern: `${singleDir}/**`,
-              group: "internal",
-            })),
-            {
-              pattern: "env",
-              group: "internal",
-            },
-            {
-              pattern: "theme",
-              group: "internal",
-            },
-            {
-              pattern: "public/**",
-              group: "internal",
-              position: "after",
-            },
-          ],
-          pathGroupsExcludedImportTypes: ["internal"],
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
-        },
-      ],
+      // Use global rules for consistency across all projects
+      ...globalImportOrderRule,
+      ...globalTypeScriptRules,
+      // Next.js specific rules
+      ...eslintPluginNext.configs.recommended.rules,
+      ...eslintPluginNext.configs["core-web-vitals"].rules,
     },
   }
 )
-
-function getDirectoriesToSort() {
-  const ignoredSortingDirectories = [".git", ".next", ".vscode", "node_modules"]
-  return fs
-    .readdirSync(process.cwd())
-    .filter((file) => fs.statSync(process.cwd() + "/" + file).isDirectory())
-    .filter((f) => !ignoredSortingDirectories.includes(f))
-}
 
 export default config

@@ -1,8 +1,8 @@
-import { Metadata } from 'next'
-import { inferVideoCategory, videoMappings } from 'data/video-mappings'
-import { env } from 'env.mjs'
+import { type Metadata } from 'next'
 import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
 import { fetchChannelVideos, type YouTubeVideo } from 'lib/youtube'
+import { inferVideoCategory, videoMappings } from 'data/video-mappings'
+import { env } from 'env.mjs'
 import VideoPageClient from './VideoPageClient'
 
 export const metadata: Metadata = {

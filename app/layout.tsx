@@ -1,4 +1,4 @@
-import { Metadata } from "next"
+import { type Metadata } from "next"
 import { Footer } from "components/Footer/Footer"
 import { Navigation } from "components/Navigation/Navigation"
 import "styles/tailwind.css"

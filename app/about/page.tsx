@@ -1,4 +1,14 @@
+import { type Metadata } from 'next'
 import { Button } from "components/Button/Button"
+
+export const metadata: Metadata = {
+  title: 'About',
+  description: 'Learn about English Unleashed - your premium source for English learning materials, podcast transcripts, and conversation practice resources.',
+  openGraph: {
+    title: 'About English Unleashed',
+    description: 'Discover how English Unleashed helps learners master daily English conversations through podcasts, PDFs, and practical exercises.',
+  },
+}
 
 const stats = [
   { value: '25K+', label: 'YouTube Subscribers' },
@@ -43,17 +53,6 @@ const philosophyItems = [
     description: 'Beginner to Advanced — we start from the basics and gradually build your skills in vocabulary, pronunciation, fluency, and confidence through clear, accessible teaching.'
   }
 ]
-
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'About',
-  description: 'Learn about English Unleashed - your premium source for English learning materials, podcast transcripts, and conversation practice resources.',
-  openGraph: {
-    title: 'About English Unleashed',
-    description: 'Discover how English Unleashed helps learners master daily English conversations through podcasts, PDFs, and practical exercises.',
-  },
-}
 
 export default function AboutPage() {
   return (

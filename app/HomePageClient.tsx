@@ -1,10 +1,10 @@
 'use client'
 
-import Link from "next/link"
 import Image from "next/image"
+import Link from "next/link"
 import { Button } from "components/Button/Button"
-import { ProcessedGumroadProduct } from "types/gumroad"
-import { YouTubeVideo } from "lib/youtube"
+import { type YouTubeVideo } from "lib/youtube"
+import { type ProcessedGumroadProduct } from "types/gumroad"
 
 interface HomePageClientProps {
   gumroadProducts: ProcessedGumroadProduct[]
