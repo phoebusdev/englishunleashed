@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { unstable_noStore as noStore } from 'next/cache'
 import { fetchChannelVideos } from 'lib/youtube'
 import { env } from 'env.mjs'
 
@@ -11,8 +12,10 @@ let videoCache: {
 const CACHE_DURATION = 60 * 60 * 1000 // 1 hour in milliseconds
 
 export async function GET() {
+  // Opt out of static rendering
+  noStore()
+  
   try {
-    
     // Check if we have cached data that's less than 1 hour old
     if (videoCache && Date.now() - videoCache.timestamp < CACHE_DURATION) {
       // Try to fetch fresh data
@@ -76,5 +79,3 @@ export async function GET() {
   }
 }
 
-// Force dynamic rendering to prevent API calls during build
-export const dynamic = 'force-dynamic'

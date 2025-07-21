@@ -1,4 +1,5 @@
 import { type Metadata } from 'next'
+import { unstable_noStore as noStore } from 'next/cache'
 import { fetchGumroadProducts, matchVideoToGumroadProduct } from 'lib/gumroad'
 import { type YouTubeVideo } from 'lib/youtube'
 import { inferVideoCategory, videoMappings } from 'data/video-mappings'
@@ -13,10 +14,10 @@ export const metadata: Metadata = {
   },
 }
 
-// Force dynamic rendering to prevent build-time execution
-export const dynamic = 'force-dynamic'
-
 export default async function VideosPage() {
+  // Opt out of static rendering
+  noStore()
+  
   // Fetch real videos from YouTube
   let youtubeVideos: YouTubeVideo[] = []
   let hasError = false
@@ -26,8 +27,7 @@ export default async function VideosPage() {
       ? `https://${process.env.VERCEL_URL}` 
       : 'http://localhost:3000'
     const response = await fetch(`${baseUrl}/api/youtube/videos`, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-      cache: 'no-store' // Prevent caching during build
+      next: { revalidate: 300 } // Cache for 5 minutes
     })
     if (response.ok) {
       const data = await response.json() as { 
@@ -40,6 +40,9 @@ export default async function VideosPage() {
       if (data.cached) {
         console.log(`Using cached videos (${data.cacheAge} minutes old)`)
       }
+    } else {
+      console.error('YouTube API response not OK:', response.status, response.statusText)
+      hasError = true
     }
   } catch (error) {
     console.error('Error fetching videos:', error)
