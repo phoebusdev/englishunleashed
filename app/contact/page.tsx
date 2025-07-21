@@ -215,7 +215,7 @@ export default function ContactPage() {
                     <span className="text-primary font-medium text-sm">Shop PDFs →</span>
                   </a>
                   
-                  <a href="/videos" className="block bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                  <a href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" rel="noopener noreferrer" className="block bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
                     <h4 className="font-semibold text-gray-900 mb-1">Video Lessons</h4>
                     <p className="text-sm text-gray-600 mb-2">Watch our podcast episodes and practice with shadowing</p>
                     <span className="text-primary font-medium text-sm">Watch Videos →</span>

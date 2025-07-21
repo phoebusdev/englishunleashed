@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
 
 const categories = [
@@ -114,8 +113,10 @@ export default function ShopPageClient({ videoPDFs, hasError }: ShopPageClientPr
                     >
                       Buy Now - {pdf.formattedPrice}
                     </a>
-                    <Link
-                      href="/videos"
+                    <a
+                      href="https://www.youtube.com/@EnglishPodcastUnleashed"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-full justify-center inline-flex items-center rounded-full text-center transition-all duration-200 font-medium shadow-md hover:shadow-lg bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 min-w-36 h-12 text-base py-3 px-6"
                     >
                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +124,7 @@ export default function ShopPageClient({ videoPDFs, hasError }: ShopPageClientPr
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       Watch Video
-                    </Link>
+                    </a>
                   </div>
                 </div>
               ))}

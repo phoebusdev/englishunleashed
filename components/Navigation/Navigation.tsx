@@ -28,9 +28,9 @@ export function Navigation() {
             <Link href="/shop" className="text-gray-700 hover:text-primary font-medium transition-colors">
               Shop PDFs
             </Link>
-            <Link href="/videos" className="text-gray-700 hover:text-primary font-medium transition-colors">
+            <a href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-primary font-medium transition-colors">
               Videos
-            </Link>
+            </a>
             <Link href="/contact" className="text-gray-700 hover:text-primary font-medium transition-colors">
               Contact
             </Link>
@@ -60,13 +60,15 @@ export function Navigation() {
               >
                 Shop PDFs
               </Link>
-              <Link 
-                href="/videos" 
+              <a 
+                href="https://www.youtube.com/@EnglishPodcastUnleashed" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Videos
-              </Link>
+              </a>
               <Link 
                 href="/contact" 
                 className="text-gray-700 hover:text-primary font-medium transition-colors"

@@ -38,7 +38,7 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
               <Button href="/shop" intent="secondary" size="lg" className="bg-white text-gray-800 hover:bg-gray-100">
                 Browse PDF Materials
               </Button>
-              <Button href="/videos" size="lg" className="bg-white/20 text-white border-2 border-white/50 hover:bg-white/30 backdrop-blur-sm">
+              <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" size="lg" className="bg-white/20 text-white border-2 border-white/50 hover:bg-white/30 backdrop-blur-sm">
                 Watch Videos
               </Button>
             </div>
@@ -141,7 +141,7 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
                   </div>
                 </div>
                 <div className="mt-8">
-                  <Button href="/videos" intent="primary" size="lg">
+                  <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" intent="primary" size="lg">
                     Watch All Episodes
                   </Button>
                 </div>
@@ -154,14 +154,16 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                  <Link 
-                    href="/videos" 
+                  <a 
+                    href="https://www.youtube.com/@EnglishPodcastUnleashed" 
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors"
                   >
                     <svg className="w-8 h-8 text-primary ml-1" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
-                  </Link>
+                  </a>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
                   <h3 className="text-white font-semibold text-lg line-clamp-2">{latestVideo.title}</h3>
@@ -226,7 +228,7 @@ export default function HomePageClient({ gumroadProducts, latestVideos }: HomePa
             Watch our videos or download a PDF to begin practicing today
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button href="/videos" intent="secondary" size="lg">
+            <Button href="https://www.youtube.com/@EnglishPodcastUnleashed" target="_blank" intent="secondary" size="lg">
               Watch Videos
             </Button>
             <Button href="/shop" intent="primary" size="lg">
