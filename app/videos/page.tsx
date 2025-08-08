@@ -1,36 +1,48 @@
 import { Metadata } from "next"
+import { prisma } from "lib/db"
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: "Free Video Lessons",
   description: "Watch free English lessons on YouTube. Learn with our clear, slow pronunciation perfect for shadowing practice.",
 }
 
-// Sample video data - replace with actual YouTube video IDs
-const videos = [
-  {
-    id: "1",
-    title: "Daily Routines Vocabulary",
-    youtubeId: "dQw4w9WgXcQ", // Replace with actual video ID
-    description: "Learn essential vocabulary for talking about your daily routine",
-    episode: "Episode #45"
-  },
-  {
-    id: "2",
-    title: "Small Talk Essentials",
-    youtubeId: "dQw4w9WgXcQ", // Replace with actual video ID
-    description: "Master the art of small talk in English conversations",
-    episode: "Episode #44"
-  },
-  {
-    id: "3",
-    title: "British Pronunciation Tips",
-    youtubeId: "dQw4w9WgXcQ", // Replace with actual video ID
-    description: "Perfect your British accent with these pronunciation tips",
-    episode: "Episode #43"
-  },
-]
+export default async function VideosPage() {
+  // Fetch actual videos from the database
+  const packs = await prisma.pack.findMany({
+    where: {
+      videoId: {
+        not: null
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    },
+    take: 12 // Show latest 12 videos
+  })
 
-export default function VideosPage() {
+  // If no videos in database, show hardcoded samples
+  const videos = packs.length > 0 ? packs : [
+    {
+      id: "1",
+      title: "Daily Routines Vocabulary",
+      videoId: "dQw4w9WgXcQ",
+      description: "Learn essential vocabulary for talking about your daily routine",
+    },
+    {
+      id: "2",
+      title: "Small Talk Essentials",
+      videoId: "dQw4w9WgXcQ",
+      description: "Master the art of small talk in English conversations",
+    },
+    {
+      id: "3",
+      title: "British Pronunciation Tips",
+      videoId: "dQw4w9WgXcQ",
+      description: "Perfect your British accent with these pronunciation tips",
+    },
+  ]
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,32 +55,56 @@ export default function VideosPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {videos.map((video) => (
-            <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="aspect-video bg-gray-200 relative">
-                <iframe
-                  src={`https://www.youtube.com/embed/${video.youtubeId}`}
-                  title={video.title}
-                  className="absolute inset-0 w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-6">
-                <div className="text-sm text-purple-600 font-medium mb-2">
-                  {video.episode}
-                </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  {video.title}
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  {video.description}
-                </p>
-              </div>
+        {videos.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4">
+              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
             </div>
-          ))}
-        </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No videos available yet</h3>
+            <p className="text-gray-500">Check back soon for new English learning videos!</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {videos.map((video, index) => (
+              <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="aspect-video bg-gray-200 relative">
+                  {video.videoId ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${video.videoId}`}
+                      title={video.title}
+                      className="absolute inset-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <div className="p-6">
+                  {packs.length > 0 && (
+                    <div className="text-sm text-purple-600 font-medium mb-2">
+                      Episode #{packs.length - index}
+                    </div>
+                  )}
+                  <h3 className="text-xl font-semibold mb-2">
+                    {video.title}
+                  </h3>
+                  {video.description && (
+                    <p className="text-gray-600 text-sm">
+                      {video.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="mt-12 text-center">
           <a
