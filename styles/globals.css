@@ -1,0 +1,166 @@
+@import 'tailwindcss';
+
+/* Custom properties for colors */
+@theme {
+  --color-primary: #20b2aa;
+  --color-secondary: #ff6b8a;
+  --color-primary-dark: #0f8080;
+  --color-secondary-light: #ff9bb0;
+  --color-accent: #10B981;
+}
+
+/* Base styles */
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+}
+
+/* Grainy gradient effects */
+.gradient-grainy {
+  position: relative;
+  background: linear-gradient(135deg, #20b2aa 0%, #ff6b8a 100%);
+}
+
+.gradient-grainy::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-opacity='0.03'%3E%3Cpolygon fill='%23000' points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(135deg, rgba(32, 178, 170, 0.8) 0%, rgba(255, 107, 138, 0.8) 100%);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.4;
+}
+
+.gradient-grainy-light {
+  position: relative;
+  background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+}
+
+.gradient-grainy-light::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-opacity='0.03'%3E%3Cpolygon fill='%23000' points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.2;
+}
+
+.gradient-grainy-podcast {
+  position: relative;
+  background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+}
+
+.gradient-grainy-podcast::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-opacity='0.03'%3E%3Cpolygon fill='%23000' points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(135deg, rgba(139, 92, 246, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.4;
+}
+
+/* Simple gradient classes */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #20b2aa 0%, #ff6b8a 100%);
+}
+
+.bg-gradient-podcast {
+  background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+}
+
+.bg-gradient-light {
+  background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+}
+
+/* Text gradient utilities */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #20b2aa 0%, #ff6b8a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-podcast {
+  background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Custom color utilities */
+.text-primary {
+  color: #20b2aa;
+}
+
+.text-secondary {
+  color: #ff6b8a;
+}
+
+.text-primary-dark {
+  color: #0f8080;
+}
+
+.bg-primary {
+  background-color: #20b2aa;
+}
+
+.bg-secondary {
+  background-color: #ff6b8a;
+}
+
+.bg-primary-dark {
+  background-color: #0f8080;
+}
+
+.border-primary {
+  border-color: #20b2aa;
+}
+
+.hover\:text-primary-dark:hover {
+  color: #0f8080;
+}
+
+.hover\:border-primary\/50:hover {
+  border-color: rgba(32, 178, 170, 0.5);
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}

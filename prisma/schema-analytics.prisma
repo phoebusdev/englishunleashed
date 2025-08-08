@@ -1,0 +1,54 @@
+// Add these models to your existing schema.prisma file
+
+model PageView {
+  id          String   @id @default(cuid())
+  pathname    String
+  referrer    String?
+  
+  // User info
+  userId      String?
+  sessionId   String
+  
+  // Device info
+  userAgent   String?
+  browser     String?
+  os          String?
+  device      String?  // mobile, tablet, desktop
+  
+  // Location info
+  country     String?
+  city        String?
+  region      String?
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  duration    Int?     // Time spent on page in seconds
+  
+  @@index([pathname, createdAt])
+  @@index([sessionId])
+  @@index([userId])
+}
+
+model AnalyticsSession {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique
+  userId      String?
+  
+  // Session info
+  startedAt   DateTime @default(now())
+  endedAt     DateTime?
+  pageViews   Int      @default(0)
+  duration    Int?     // Total session duration in seconds
+  
+  // Entry info
+  entryPage   String?
+  exitPage    String?
+  
+  // Traffic source
+  source      String?  // google, direct, social, etc
+  medium      String?  // organic, cpc, referral, etc
+  campaign    String?
+  
+  @@index([userId])
+  @@index([startedAt])
+}

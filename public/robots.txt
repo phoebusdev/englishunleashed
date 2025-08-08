@@ -1,0 +1,33 @@
+# Robots.txt for English Unleashed
+# This file is dynamically generated. See /app/robots.ts
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /account/
+Disallow: /auth/
+Disallow: /_next/
+Disallow: /download/
+
+# Search engine specific rules
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /account/
+Disallow: /_next/
+Disallow: /download/
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /account/
+Disallow: /_next/
+Disallow: /download/
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://englishunleashed.com/sitemap.xml
