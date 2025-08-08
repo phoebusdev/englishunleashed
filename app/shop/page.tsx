@@ -2,6 +2,8 @@ import { Metadata } from "next"
 import Link from "next/link"
 import { prisma } from "lib/db"
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Shop - English Learning Materials",
   description: "Download our English learning PDFs and video courses. Master English with the shadowing method.",
