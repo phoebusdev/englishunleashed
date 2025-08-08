@@ -47,7 +47,9 @@ export default async function ShopTestPage() {
         {error ? (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
             <h3 className="font-bold">Database Error:</h3>
-            <p className="text-sm">{error}</p>
+            <p className="text-sm">{error.includes('DATABASE_URL') ? 'Database connection failed. Check environment variables.' : error}</p>
+            <p className="text-xs mt-2">Environment: {process.env.NODE_ENV}</p>
+            <p className="text-xs">Database URL is: {process.env.DATABASE_URL ? 'SET' : 'NOT SET'}</p>
           </div>
         ) : (
           <>
