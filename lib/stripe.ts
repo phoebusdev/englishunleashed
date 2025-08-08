@@ -1,15 +1,33 @@
 import Stripe from 'stripe'
 
 // Use process.env directly to avoid validation issues during initialization
-const stripeKey = process.env.STRIPE_SECRET_KEY || ''
+const stripeKey = process.env.STRIPE_SECRET_KEY
 
-if (!stripeKey || stripeKey === '') {
-  console.error('Warning: STRIPE_SECRET_KEY is not set. Stripe functionality will not work.')
+// Only initialize Stripe if we have a key
+let stripe: Stripe
+
+if (stripeKey) {
+  // Validate the key format (basic check)
+  if (!stripeKey.startsWith('sk_')) {
+    console.warn('Warning: STRIPE_SECRET_KEY does not start with "sk_". Make sure you are using the correct secret key.')
+  }
+  
+  stripe = new Stripe(stripeKey, {
+    apiVersion: '2024-11-20.acacia',
+    maxNetworkRetries: 3,
+    timeout: 10000, // 10 seconds
+  })
+} else {
+  console.error('STRIPE_SECRET_KEY is not set. Stripe functionality will be disabled.')
+  // Create a dummy stripe object that throws helpful errors
+  stripe = new Proxy({} as Stripe, {
+    get() {
+      throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.')
+    }
+  })
 }
 
-export const stripe = new Stripe(stripeKey, {
-  apiVersion: '2024-11-20.acacia',
-})
+export { stripe }
 
 interface CreatePaymentLinkParams {
   productName: string
