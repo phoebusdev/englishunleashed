@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { env } from 'env.mjs'
-import { stripe } from 'lib/stripe'
+import { stripe } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   try {
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
 
 
     // Get the origin URL from request headers for proper redirect
-    const origin = request.headers.get('origin') || env.NEXTAUTH_URL
+    const origin = request.headers.get('origin') || process.env.NEXTAUTH_URL || 'http://localhost:3000'
     console.log('Creating checkout session with origin:', origin)
 
     // Create Stripe checkout session (fallback)
@@ -141,11 +141,21 @@ export async function POST(request: NextRequest) {
       sessionId: session.id,
       url: session.url 
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Checkout session error:', error)
+    console.error('Error details:', {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      statusCode: error.statusCode
+    })
+    
+    // Return more specific error message
+    const errorMessage = error.message || 'Failed to create checkout session'
+    
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
-      { status: 500 }
+      { error: errorMessage },
+      { status: error.statusCode || 500 }
     )
   }
 }

@@ -1,7 +1,13 @@
 import Stripe from 'stripe'
-import { env } from 'env.mjs'
 
-export const stripe = new Stripe(env.STRIPE_SECRET_KEY || '', {
+// Use process.env directly to avoid validation issues during initialization
+const stripeKey = process.env.STRIPE_SECRET_KEY || ''
+
+if (!stripeKey || stripeKey === '') {
+  console.error('Warning: STRIPE_SECRET_KEY is not set. Stripe functionality will not work.')
+}
+
+export const stripe = new Stripe(stripeKey, {
   apiVersion: '2024-11-20.acacia',
 })
 
@@ -43,7 +49,7 @@ export async function createPaymentLink({
       after_completion: {
         type: 'redirect',
         redirect: {
-          url: `${env.NEXTAUTH_URL}/success?packId=${packId}`,
+          url: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/success?packId=${packId}`,
         },
       },
       metadata: {

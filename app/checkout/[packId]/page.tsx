@@ -24,8 +24,10 @@ export default async function CheckoutPage({
     redirect('/shop')
   }
 
-  // If product has a Stripe payment link, use that
-  if (pack.product.stripePaymentLinkUrl) {
+  // If product has a valid Stripe payment link, use that
+  if (pack.product.stripePaymentLinkUrl && 
+      pack.product.stripePaymentLinkUrl.startsWith('https://buy.stripe.com/') &&
+      !pack.product.stripePaymentLinkUrl.includes('test_sample')) {
     // If user is logged in, append their email to the payment link
     const paymentUrl = new URL(pack.product.stripePaymentLinkUrl)
     if (session?.user?.email) {
