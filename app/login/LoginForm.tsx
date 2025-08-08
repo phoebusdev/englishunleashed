@@ -30,8 +30,8 @@ export function LoginForm() {
       if (result?.error) {
         setError('Invalid email or password')
       } else if (result?.ok) {
-        router.push(callbackUrl)
-        router.refresh()
+        // Force a hard redirect for better reliability
+        window.location.href = callbackUrl
       }
     } catch {
       setError('An error occurred. Please try again.')
