@@ -3,12 +3,21 @@ import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/db'
 import { env } from 'env.mjs'
-import { generateDownloadToken } from 'lib/jwt'
-import { stripe } from 'lib/stripe'
+import { generateDownloadToken } from '@/lib/jwt'
+import { stripe } from '@/lib/stripe'
 
 export async function POST(req: Request) {
   const body = await req.text()
   const signature = headers().get('stripe-signature')!
+
+  // Check if Stripe is configured
+  if (!stripe) {
+    console.error('Stripe is not configured for webhook processing')
+    return NextResponse.json(
+      { error: 'Payment system not configured' },
+      { status: 503 }
+    )
+  }
 
   let event: Stripe.Event
 
@@ -106,7 +115,7 @@ export async function POST(req: Request) {
         const downloadUrl = `${baseUrl}/api/download/${order.id}?token=${downloadToken}`
         
         // Send purchase confirmation email
-        const { sendPurchaseEmail } = await import('lib/email')
+        const { sendPurchaseEmail } = await import('@/lib/email')
         const customerEmail = session.customer_email!
         
         await sendPurchaseEmail(customerEmail, {

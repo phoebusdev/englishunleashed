@@ -3,30 +3,36 @@ import Stripe from 'stripe'
 // Use process.env directly to avoid validation issues during initialization
 const stripeKey = process.env.STRIPE_SECRET_KEY
 
-// Only initialize Stripe if we have a key
-let stripe: Stripe
+// Initialize Stripe only if we have a valid key
+let stripe: Stripe | null = null
 
-if (stripeKey) {
+if (stripeKey && stripeKey.length > 0) {
   // Validate the key format (basic check)
   if (!stripeKey.startsWith('sk_')) {
     console.warn('Warning: STRIPE_SECRET_KEY does not start with "sk_". Make sure you are using the correct secret key.')
   }
   
-  stripe = new Stripe(stripeKey, {
-    apiVersion: '2024-11-20.acacia',
-    maxNetworkRetries: 3,
-    timeout: 10000, // 10 seconds
-  })
+  try {
+    stripe = new Stripe(stripeKey, {
+      apiVersion: '2024-11-20.acacia',
+      maxNetworkRetries: 3,
+      timeout: 10000, // 10 seconds
+    })
+    console.log('✅ Stripe initialized successfully')
+  } catch (error) {
+    console.error('❌ Failed to initialize Stripe:', error)
+    stripe = null
+  }
 } else {
-  console.error('STRIPE_SECRET_KEY is not set. Stripe functionality will be disabled.')
-  // Create a dummy stripe object that throws helpful errors
-  stripe = new Proxy({} as Stripe, {
-    get() {
-      throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.')
-    }
-  })
+  console.warn('⚠️ STRIPE_SECRET_KEY is not set. Stripe functionality will be disabled.')
 }
 
+// Helper function to check if Stripe is configured
+export function isStripeConfigured(): boolean {
+  return stripe !== null
+}
+
+// Export a safe stripe object that checks for null
 export { stripe }
 
 interface CreatePaymentLinkParams {
@@ -42,6 +48,10 @@ export async function createPaymentLink({
   packId,
   promoCode
 }: CreatePaymentLinkParams) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured')
+  }
+  
   try {
     // Create a Stripe product
     const product = await stripe.products.create({
@@ -93,6 +103,10 @@ export async function updatePaymentLink(
   paymentLinkId: string,
   active: boolean
 ) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured')
+  }
+  
   try {
     const updated = await stripe.paymentLinks.update(paymentLinkId, {
       active,

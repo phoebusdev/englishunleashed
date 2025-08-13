@@ -102,7 +102,7 @@ export default async function ShopPage() {
                     </span>
                     {product.active && product.packs.length > 0 ? (
                       <Link
-                        href={`/checkout/${product.packs[0].id}`}
+                        href={`/checkout/product/${product.id}`}
                         className="inline-flex items-center justify-center px-4 py-2 bg-gradient-primary text-white font-medium rounded-full hover:shadow-lg hover:scale-105 transition-all"
                       >
                         Buy Now

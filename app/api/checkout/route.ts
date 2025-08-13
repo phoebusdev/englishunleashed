@@ -3,32 +3,76 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { env } from 'env.mjs'
-import { stripe } from '@/lib/stripe'
+import { stripe, isStripeConfigured } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
+  // Check if Stripe is configured
+  if (!isStripeConfigured() || !stripe) {
+    console.error('Stripe is not configured')
+    return NextResponse.json(
+      { error: 'Payment system is not configured. Please contact support.' },
+      { status: 503 }
+    )
+  }
+
   try {
     const body = await request.json() as {
-      packId: string
+      packId?: string
+      productId?: string
       promoCode?: string
       mode?: 'payment_intent' | 'checkout_session'
     }
-    const { packId, promoCode, mode = 'checkout_session' } = body
+    const { packId, productId, promoCode, mode = 'checkout_session' } = body
     
     // Get the authenticated user session
     const authSession = await getServerSession(authOptions)
 
-    // Fetch pack details
-    const pack = await prisma.pack.findUnique({
-      where: { id: packId },
-      include: {
-        product: true,
-      },
-    })
+    // Determine if we're checking out a pack or a product
+    let pack: any
+    let product: any
+    
+    if (productId) {
+      // Product-based checkout
+      product = await prisma.product.findUnique({
+        where: { id: productId },
+        include: {
+          packs: {
+            orderBy: { order: 'asc' }
+          }
+        }
+      })
+      
+      if (!product || !product.active || product.packs.length === 0) {
+        return NextResponse.json(
+          { error: 'Product not found or inactive' },
+          { status: 404 }
+        )
+      }
+      
+      // Use the first pack as primary for metadata
+      pack = product.packs[0]
+      pack.product = product
+    } else if (packId) {
+      // Pack-based checkout (legacy)
+      pack = await prisma.pack.findUnique({
+        where: { id: packId },
+        include: {
+          product: true,
+        },
+      })
 
-    if (!pack || !pack.product.active) {
+      if (!pack || !pack.product.active) {
+        return NextResponse.json(
+          { error: 'Pack not found or inactive' },
+          { status: 404 }
+        )
+      }
+      
+      product = pack.product
+    } else {
       return NextResponse.json(
-        { error: 'Pack not found or inactive' },
-        { status: 404 }
+        { error: 'Either packId or productId is required' },
+        { status: 400 }
       )
     }
 
@@ -45,7 +89,7 @@ export async function POST(request: NextRequest) {
           ],
           products: {
             some: {
-              productId: pack.productId
+              productId: product.id
             }
           }
         }
@@ -53,14 +97,14 @@ export async function POST(request: NextRequest) {
 
       if (promo) {
         if (promo.discountType === 'PERCENTAGE') {
-          discountAmount = Math.round(pack.product.price * (promo.discountValue / 100))
+          discountAmount = Math.round(product.price * (promo.discountValue / 100))
         } else if (promo.discountType === 'FIXED_AMOUNT') {
           discountAmount = promo.discountValue
         }
       }
     }
 
-    const finalPrice = Math.max(100, pack.product.price - discountAmount) // Minimum £1
+    const finalPrice = Math.max(100, product.price - discountAmount) // Minimum £1
 
     // Create payment intent for embedded checkout
     if (mode === 'payment_intent') {
@@ -70,11 +114,12 @@ export async function POST(request: NextRequest) {
           currency: 'gbp',
           metadata: {
             packId: pack.id,
+            productId: product.id,
             promoCode: promoCode || '',
-            originalPrice: pack.product.price.toString(),
+            originalPrice: product.price.toString(),
             discountAmount: discountAmount.toString(),
             userId: authSession?.user?.id || '',
-            productTitle: pack.title,
+            productTitle: product.title,
           },
           payment_method_types: ['card'],
         })
@@ -84,8 +129,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           clientSecret: paymentIntent.client_secret,
           amount: finalPrice,
-          packTitle: pack.title,
-          packDescription: pack.description,
+          packTitle: product.title,
+          packDescription: product.description,
         })
       } catch (stripeError: any) {
         console.error('Stripe payment intent error:', stripeError)
@@ -109,8 +154,8 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'gbp',
             product_data: {
-              name: pack.title,
-              description: pack.description || undefined,
+              name: product.title,
+              description: product.description || undefined,
             },
             unit_amount: finalPrice,
           },
@@ -122,8 +167,9 @@ export async function POST(request: NextRequest) {
       cancel_url: `${origin}/checkout/${packId}`,
       metadata: {
         packId: pack.id,
+        productId: product.id,
         promoCode: promoCode || '',
-        originalPrice: pack.product.price.toString(),
+        originalPrice: product.price.toString(),
         discountAmount: discountAmount.toString(),
         userId: authSession?.user?.id || '',
       },

@@ -13,15 +13,17 @@ interface CheckoutClientProps {
     price: number
   }
   userEmail?: string
+  isProductCheckout?: boolean
 }
 
-export function CheckoutClient({ pack, product, userEmail }: CheckoutClientProps) {
+export function CheckoutClient({ pack, product, userEmail, isProductCheckout }: CheckoutClientProps) {
   return (
     <StripeCheckout 
       packId={pack.id}
       packTitle={pack.title}
       packDescription={pack.description || undefined}
       packPrice={product.price}
+      productId={isProductCheckout ? product.id : undefined}
     />
   )
 }

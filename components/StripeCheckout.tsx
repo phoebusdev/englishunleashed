@@ -11,9 +11,10 @@ interface StripeCheckoutProps {
   packTitle: string
   packDescription?: string
   packPrice: number
+  productId?: string
 }
 
-export function StripeCheckout({ packId, packTitle, packDescription, packPrice }: StripeCheckoutProps) {
+export function StripeCheckout({ packId, packTitle, packDescription, packPrice, productId }: StripeCheckoutProps) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -40,7 +41,8 @@ export function StripeCheckout({ packId, packTitle, packDescription, packPrice }
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          packId,
+          packId: productId ? undefined : packId,
+          productId: productId || undefined,
           mode: 'checkout_session'
         }),
       })

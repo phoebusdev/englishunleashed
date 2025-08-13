@@ -1,6 +1,6 @@
 import { Resend } from 'resend'
 import { env } from 'env.mjs'
-import { prisma } from './prisma'
+import { prisma } from './db'
 
 // Initialize Resend client
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null
