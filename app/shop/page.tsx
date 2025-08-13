@@ -10,18 +10,35 @@ export const metadata: Metadata = {
 }
 
 export default async function ShopPage() {
-  // Get products with their packs from the database
-  const products = await prisma.product.findMany({
-    where: {
-      active: true
-    },
-    include: {
-      packs: true
-    },
-    orderBy: {
-      createdAt: 'desc'
+  let products = []
+  
+  try {
+    // Get products with their packs from the database
+    products = await prisma.product.findMany({
+      where: {
+        active: true
+      },
+      include: {
+        packs: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+  } catch (error) {
+    console.error('[Shop Page] Database error:', error)
+    // Log additional details in production
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[Shop Page] DATABASE_URL configured:', !!process.env.DATABASE_URL)
+      console.error('[Shop Page] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        name: error instanceof Error ? error.name : 'Unknown',
+        stack: error instanceof Error ? error.stack?.split('\n').slice(0, 3).join('\n') : 'No stack'
+      })
     }
-  })
+    // Return empty array on error to show fallback UI
+    products = []
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">

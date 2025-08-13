@@ -9,18 +9,35 @@ export const metadata: Metadata = {
 }
 
 export default async function VideosPage() {
-  // Fetch actual videos from the database
-  const packs = await prisma.pack.findMany({
-    where: {
-      videoId: {
-        not: null
-      }
-    },
-    orderBy: {
-      createdAt: 'desc'
-    },
-    take: 12 // Show latest 12 videos
-  })
+  let packs = []
+  
+  try {
+    // Fetch actual videos from the database
+    packs = await prisma.pack.findMany({
+      where: {
+        videoId: {
+          not: null
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: 12 // Show latest 12 videos
+    })
+  } catch (error) {
+    console.error('[Videos Page] Database error:', error)
+    // Log additional details in production
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[Videos Page] DATABASE_URL configured:', !!process.env.DATABASE_URL)
+      console.error('[Videos Page] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        name: error instanceof Error ? error.name : 'Unknown',
+        stack: error instanceof Error ? error.stack?.split('\n').slice(0, 3).join('\n') : 'No stack'
+      })
+    }
+    // Return empty array on error to use fallback samples
+    packs = []
+  }
 
   // If no videos in database, show hardcoded samples
   const videos = packs.length > 0 ? packs : [

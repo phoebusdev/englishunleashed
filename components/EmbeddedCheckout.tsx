@@ -84,12 +84,12 @@ function CheckoutForm({ packTitle, amount, packId }: CheckoutFormProps) {
         setError('Failed to confirm payment')
         setProcessing(false)
       }
+    }
     } catch (err: any) {
       console.error('Payment processing error:', err)
       setError(err.message || 'Payment processing failed')
       setProcessing(false)
     }
-  }
   }
 
   return (
