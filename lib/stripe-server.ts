@@ -5,9 +5,11 @@
 
 import Stripe from 'stripe'
 
-// Validate environment variables at build time
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing STRIPE_SECRET_KEY environment variable')
+// Validate environment variables
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY
+
+if (!stripeSecretKey) {
+  console.error('ERROR: Missing STRIPE_SECRET_KEY environment variable')
 }
 
 if (!process.env.STRIPE_WEBHOOK_SECRET) {
@@ -15,7 +17,8 @@ if (!process.env.STRIPE_WEBHOOK_SECRET) {
 }
 
 // Initialize Stripe with best practices configuration
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+// Use a fallback empty string to prevent build errors, but it will fail at runtime
+export const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
   apiVersion: '2024-11-20.acacia',
   
   // TypeScript configuration
@@ -34,7 +37,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     version: '1.0.0',
     url: 'https://englishunleashed.com',
   },
-})
+}) : null as any
 
 /**
  * Create a Stripe Checkout Session with best practices
@@ -64,6 +67,9 @@ export async function createCheckoutSession({
   metadata = {},
   promoCode,
 }: CreateCheckoutSessionParams): Promise<Stripe.Checkout.Session> {
+  if (!stripe) {
+    throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.')
+  }
   // Build line items
   const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
     {

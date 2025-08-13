@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
-import { env } from 'env.mjs'
 
-const stripeKey = env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51RsTYMIXJgbHswroLtjlQu5DnDjV1J3iKzH6losuMq6gtjdGN84PUCERdhbpwpuBtxO1dL0bjZLGBNJpMWPL4c2x00b7gMUo7S'
+// Use process.env directly for client-side environment variables
+const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51RsTYMIXJgbHswroLtjlQu5DnDjV1J3iKzH6losuMq6gtjdGN84PUCERdhbpwpuBtxO1dL0bjZLGBNJpMWPL4c2x00b7gMUo7S'
 
 interface StripeCheckoutProps {
   packId: string

@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
-import { createCheckoutSession } from '@/lib/stripe-server'
+import { stripe } from '@/lib/stripe'
 import { z } from 'zod'
 
 // Request validation schema
@@ -19,6 +19,14 @@ const checkoutSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
+  // Check if Stripe is configured
+  if (!stripe) {
+    return NextResponse.json(
+      { error: 'Payment system is not configured' },
+      { status: 503 }
+    )
+  }
+
   try {
     // Parse and validate request body
     const body = await request.json()
@@ -108,24 +116,35 @@ export async function POST(request: NextRequest) {
     }
     
     // Create Stripe checkout session
-    const checkoutSession = await createCheckoutSession({
-      productId: product.id,
-      priceInCents: finalPrice,
-      productName: product.title,
-      productDescription: product.description || undefined,
-      customerEmail: session?.user?.email,
-      userId: session?.user?.id,
-      successUrl: successUrl || `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: cancelUrl || `${baseUrl}/checkout/product/${productId}`,
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'gbp',
+          product_data: {
+            name: product.title,
+            description: product.description || undefined,
+          },
+          unit_amount: finalPrice,
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: successUrl || `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl || `${baseUrl}/checkout/product/${productId}`,
+      customer_email: session?.user?.email || undefined,
       metadata: {
         productId: product.id,
+        userId: session?.user?.id || 'guest',
         originalPrice: product.price.toString(),
         discountAmount: discountAmount.toString(),
         promoCode: promoCode || '',
-        // Include pack IDs for order fulfillment
         packIds: product.packs.map(p => p.id).join(','),
       },
-      promoCode,
+      allow_promotion_codes: false,
+      billing_address_collection: 'auto',
+      locale: 'auto',
+      expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30 minutes
     })
     
     // Log for monitoring

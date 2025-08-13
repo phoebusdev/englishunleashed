@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { redirect } from 'next/navigation'
-import { CheckoutClient } from '../../[packId]/CheckoutClient'
+import { ModernCheckout } from '@/components/ModernCheckout'
 
 export default async function ProductCheckoutPage({ 
   params 
@@ -45,18 +45,12 @@ export default async function ProductCheckoutPage({
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-4xl mx-auto px-4">
-        <CheckoutClient 
-          pack={{
-            id: primaryPack.id,
-            title: product.title,
-            description: product.description || `Includes ${product.packs.length} pack${product.packs.length > 1 ? 's' : ''}: ${product.packs.map(p => p.title).join(', ')}`
-          }} 
-          product={{
-            id: product.id,
-            price: product.price
-          }} 
+        <ModernCheckout
+          productId={product.id}
+          productTitle={product.title}
+          productDescription={product.description || `Includes ${product.packs.length} pack${product.packs.length > 1 ? 's' : ''}: ${product.packs.map(p => p.title).join(', ')}`}
+          priceInCents={product.price}
           userEmail={session?.user?.email}
-          isProductCheckout={true}
         />
       </div>
     </div>
