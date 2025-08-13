@@ -4,170 +4,261 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-English Unleashed - Next.js e-commerce platform for educational content with YouTube integration, Stripe payment processing, and a comprehensive quiz system.
+English Unleashed - Next.js e-commerce platform for educational content with YouTube integration, Stripe payment processing, and a comprehensive quiz system. Built on Next.js Enterprise Boilerplate foundation.
 
-## Development Commands
+## Core Development Commands
 
 ```bash
-# Install dependencies
-pnpm install
+# Essential setup (run in order for new setup)
+pnpm install                      # Install dependencies
+pnpm db:push                      # Push schema to SQLite database
+pnpm seed:admin                   # Create admin user (required for /admin access)
+pnpm dev                          # Start dev server (port 3000)
 
-# Database setup (SQLite for local dev)
-pnpm db:push              # Push schema to database
-pnpm db:studio            # Open Prisma Studio UI
-pnpm seed:admin           # Create admin user
+# Code quality checks (run before committing)
+pnpm typecheck                    # TypeScript type checking
+pnpm lint                         # ESLint checks
+pnpm lint:fix                     # Auto-fix ESLint issues
+pnpm prettier:fix                 # Format code
+pnpm build                        # Production build (final validation)
 
-# Development
-pnpm dev                  # Start dev server (port 3000)
-pnpm build                # Production build
-pnpm start                # Start production server
+# Testing
+pnpm test                         # Jest unit tests
+pnpm e2e:headless                 # Playwright E2E tests
+pnpm test-storybook               # Storybook tests
 
-# Code quality
-pnpm lint                 # Run ESLint
-pnpm lint:fix             # Fix ESLint issues
-pnpm prettier             # Check formatting
-pnpm prettier:fix         # Fix formatting
-pnpm test                 # Run Jest tests
-pnpm e2e:headless         # Run Playwright tests
+# Database management
+pnpm db:studio                    # Open Prisma Studio UI
+pnpm prisma generate              # Regenerate Prisma client after schema changes
 
-# Component development
-pnpm storybook            # Start Storybook (port 6006)
-pnpm build-storybook      # Build Storybook
+# YouTube sync (if configured)
+pnpm youtube:sync                 # Manual sync
+pnpm sync:videos                  # Initial video import
 
-# Analysis tools
-pnpm analyze              # Bundle size analysis
-pnpm coupling-graph       # Generate dependency graph
+# Development tools
+pnpm storybook                    # Component development (port 6006)
+pnpm analyze                      # Bundle size analysis
+pnpm coupling-graph               # Generate dependency graph
 ```
 
-## Architecture
+## Architecture & Key Patterns
 
 ### Tech Stack
-- **Next.js 15.3.1** with App Router
-- **React 19.1.0** with TypeScript 5.8.3
+- **Next.js 15.3.1** with App Router (React 19.1.0)
+- **TypeScript 5.8.3** with strict mode
 - **Tailwind CSS v4** with PostCSS
 - **Prisma ORM** with SQLite (dev) / PostgreSQL (prod)
-- **NextAuth** for authentication
-- **Stripe** for payments
-- **Radix UI** for accessible components
-- **Zod + T3 Env** for environment validation
+- **NextAuth** for authentication (JWT strategy)
+- **Stripe** for payments (Payment Links + webhooks)
+- **Radix UI** components with CVA for variants
+- **Zod** + T3 Env for validation
 
-### Directory Structure
+### Critical File Structure
 ```
-/app                      # Next.js App Router
-  /(public)              # Public-facing pages
-  /account               # User dashboard
-  /admin                 # Admin dashboard
-  /api                   # API routes
-    /admin               # Admin API endpoints
-    /auth                # Authentication endpoints
-    /cron                # Scheduled jobs
-    /webhooks            # External webhooks (Stripe)
-/components              # Reusable UI components
-/hooks                   # Custom React hooks
-/lib                     # Core utilities
-  auth.ts               # NextAuth configuration
-  db.ts                 # Prisma client
-  email.ts              # Email service
-  stripe.ts             # Stripe configuration
-  youtube.ts            # YouTube API integration
+/app                              # Next.js App Router
+  /(public)                      # Public pages (no auth)
+    /shop, /videos, /checkout    
+  /account                       # User dashboard (auth required)
+    /quizzes, /orders            
+  /admin                         # Admin panel (admin auth)
+    /quiz-builder, /packs        
+  /api                           # API routes
+    /admin/*                     # Admin endpoints (protected)
+    /auth/[...nextauth]         # Auth handlers
+    /webhooks/stripe             # Payment webhooks
+    /cron/*                      # Scheduled jobs
+
+/lib                             # Core utilities (AI-optimized)
+  /errors                        # Centralized error handling
+  /validation                    # Zod schemas for all models
+  /dev-utils                     # Development helpers
+  /api/response.ts               # Standardized API responses
+  auth.ts                        # NextAuth configuration
+  db.ts                          # Prisma client singleton
+  stripe.ts                      # Stripe initialization
+  youtube.ts                     # YouTube API client
+
+/components                      # Reusable UI components
+  /ui                           # Base components (Button, Card, etc.)
+  /quiz                         # Quiz-specific components
+  /shop                         # E-commerce components
+
 /prisma
-  schema.prisma         # Database schema
+  schema.prisma                  # Database schema
 ```
 
-### Key Patterns
+### AI-Friendly Refactoring Features
 
-#### Component Variants (CVA)
-All UI components use class-variance-authority for consistent styling:
+#### Error Handling System (`/lib/errors`)
 ```typescript
+import { ValidationError, assert, ensureExists, handleApiError } from '@/lib/errors'
+
+// Use specific error classes
+throw new ValidationError('Invalid input', { field: 'email' })
+
+// Assert conditions
+assert(user.isAdmin, 'Admin access required')
+
+// Ensure non-null values
+const validUser = ensureExists(user, 'User')
+
+// Handle API errors consistently
+try {
+  // operation
+} catch (error) {
+  return handleApiError(error)
+}
+```
+
+#### Validation Schemas (`/lib/validation`)
+```typescript
+import { validate, UserCreateSchema, OrderCreateSchema } from '@/lib/validation'
+
+// Validate and type data
+const userData = validate(UserCreateSchema, requestBody)
+```
+
+#### Development Utilities (`/lib/dev-utils`)
+```typescript
+import { devLog, startTimer, checkEnvVars } from '@/lib/dev-utils'
+
+// Enhanced logging
+devLog.info('Processing order', { orderId })
+
+// Performance monitoring
+const timer = startTimer('Database query')
+// ... operation
+timer.end()
+```
+
+#### API Response Standards (`/lib/api/response`)
+```typescript
+import { createSuccessResponse, createErrorResponse } from '@/lib/api/response'
+
+// Consistent API responses
+return createSuccessResponse(data, 'Operation successful')
+return createErrorResponse('Not found', 404)
+```
+
+### Database Models & Relations
+
+- **User**: Auth, roles, purchase history
+- **Pack**: Product bundles (video + PDF + quiz)
+- **Order**: Purchase records with Stripe integration
+- **Quiz/Question/Answer**: Multiple choice quiz system
+- **EmailQueue**: Async email processing
+- **Analytics**: PageView, Session, DownloadLog tracking
+
+### Authentication & Authorization
+
+1. **NextAuth Configuration**: JWT strategy with credentials provider
+2. **Protected Routes**: Middleware checks in `/middleware.ts`
+3. **Admin Access**: Role-based with `user.isAdmin` flag
+4. **Guest Checkout**: 24-hour download access via JWT tokens
+
+### Payment Flow
+
+1. User selects pack → redirects to Stripe Payment Link
+2. Stripe webhook (`/api/webhooks/stripe`) handles completion
+3. Order created with status tracking
+4. Email notification queued
+5. Download URLs generated with expiry
+
+### Environment Variables
+
+```bash
+# Required for development
+DATABASE_URL="file:./dev.db"              # SQLite for local
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="<generate-with-openssl>" # openssl rand -base64 32
+
+# Optional services (see .env.example)
+STRIPE_SECRET_KEY                         # Payment processing
+STRIPE_WEBHOOK_SECRET                     # Webhook verification
+YOUTUBE_API_KEY                           # Video sync
+RESEND_API_KEY                            # Email service
+BLOB_READ_WRITE_TOKEN                     # File storage
+CRON_SECRET                               # Scheduled jobs
+```
+
+### Component Patterns
+
+#### CVA for Variants
+```typescript
+import { cva } from "class-variance-authority"
+
 const buttonVariants = cva("base-classes", {
   variants: {
     variant: { primary: "...", secondary: "..." },
     size: { sm: "...", md: "...", lg: "..." }
-  }
+  },
+  defaultVariants: { variant: "primary", size: "md" }
 })
 ```
 
-#### Database Models
-- **User**: Authentication, admin roles, purchase tracking
-- **Product/Pack**: Video + PDF + Quiz bundles
-- **Order**: Purchase records with Stripe integration
-- **Quiz/Question**: Multiple choice quiz system
-- **EmailQueue**: Async email processing
-- **Analytics**: PageView, Session, DownloadLog tracking
+#### Server vs Client Components
+- Default to Server Components
+- Use `"use client"` only when needed (interactivity, hooks, browser APIs)
+- Data fetching in Server Components with Prisma
 
-#### Authentication Flow
-1. NextAuth with JWT strategy
-2. Credentials provider with bcrypt password hashing
-3. Admin middleware for protected routes
-4. Guest checkout with 24hr download access
-
-#### Payment Processing
-1. Stripe Payment Links for products
-2. Webhook handling for order completion
-3. Automatic email notifications
-4. Secure PDF download URLs with expiry
-
-### Environment Variables
-
-Required for development:
-```bash
-DATABASE_URL="file:./dev.db"              # SQLite for local dev
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="<generate-with-openssl>"
-```
-
-Optional services:
-- `STRIPE_*` - Payment processing
-- `YOUTUBE_*` - Video sync
-- `RESEND_API_KEY` - Email notifications
-- `BLOB_READ_WRITE_TOKEN` - File storage
-- `CRON_SECRET` - Scheduled jobs
-
-### API Routes Pattern
-
-All API routes use standard Next.js App Router conventions:
+#### API Route Pattern
 ```typescript
 // app/api/[route]/route.ts
-export async function GET(request: Request) { }
-export async function POST(request: Request) { }
-export async function PUT(request: Request, { params }) { }
-export async function DELETE(request: Request, { params }) { }
+import { createSuccessResponse } from '@/lib/api/response'
+import { validate } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const data = validate(Schema, body)
+    // ... operation
+    return createSuccessResponse(result)
+  } catch (error) {
+    return handleApiError(error)
+  }
+}
 ```
 
-### Admin Features
+### Testing Strategy
 
-The admin dashboard (`/admin`) provides:
-- Pack management (create/edit/delete)
-- PDF uploads via Vercel Blob
-- Quiz builder with multiple choice questions
-- User management
-- Order tracking
-- Email queue monitoring
-- Analytics dashboard
+- **Unit Tests**: Jest for utilities and helpers
+- **Component Tests**: React Testing Library
+- **E2E Tests**: Playwright for critical user flows
+- **Visual Tests**: Storybook for component development
 
-### Automated Systems
+### Common Tasks
 
-1. **YouTube Sync** (`/api/cron/sync-youtube`)
-   - Runs hourly via Vercel Cron
-   - Creates inactive packs from new videos
-   - Admin completes by adding PDF + quiz
+#### Adding a New Pack
+1. Admin panel → Packs → Create
+2. Upload PDF to Vercel Blob
+3. Add quiz questions
+4. Set Stripe Payment Link
+5. Activate pack
 
-2. **Email Queue** (`/api/cron/email-queue`)
-   - Processes pending emails every 5 minutes
-   - Handles purchase confirmations
-   - Notifies when content becomes available
+#### Modifying Quiz System
+- Quiz components: `/components/quiz/`
+- Quiz API: `/app/api/quiz/`
+- Database schema: `prisma/schema.prisma` (Quiz, Question, Answer models)
 
-### Testing Approach
+#### Debugging Payments
+1. Check Stripe webhook logs: `/admin/webhooks`
+2. Verify environment variables
+3. Test with Stripe CLI: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
 
-- Unit tests with Jest for utilities
-- Component testing with React Testing Library
-- E2E tests with Playwright for critical flows
-- Storybook for visual component development
+### Performance Optimizations
 
-### Security Considerations
+- Image optimization with Next.js Image
+- Static generation where possible
+- Database query optimization with Prisma
+- Client-side caching with SWR patterns
+- Bundle splitting automatic with Next.js
 
-- CSRF protection on state-changing operations
-- Rate limiting on authentication endpoints
-- Secure download URLs with JWT tokens
-- Input validation with Zod schemas
-- SQL injection prevention via Prisma ORM
+### Security Measures
+
+- CSRF protection on mutations
+- Rate limiting on auth endpoints
+- Input validation with Zod
+- SQL injection prevention via Prisma
+- Secure download URLs with JWT
+- Environment variable validation with T3 Env
