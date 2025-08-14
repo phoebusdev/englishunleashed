@@ -333,31 +333,3 @@ enum EmailStatus {
   FAILED
   CANCELLED
 }
-
-// YouTube Video model - stores all channel videos for historical display
-model YouTubeVideo {
-  id          String   @id @default(cuid())
-  videoId     String   @unique // YouTube video ID
-  title       String
-  description String?  @db.Text
-  publishedAt DateTime
-  thumbnailUrl String?
-  thumbnailWidth Int?
-  thumbnailHeight Int?
-  channelId   String?  // YouTube channel ID
-  videoUrl    String   // Full YouTube URL
-  duration    String?  // Video duration if available
-  viewCount   String?  // View count if available
-  
-  // Tracking
-  addedAt     DateTime @default(now()) // When we first discovered this video
-  updatedAt   DateTime @updatedAt      // Last time we updated metadata
-  lastSeenAt  DateTime @default(now()) // Last time RSS feed included this video
-  
-  // Metadata
-  metadata    String?  @db.Text // JSON string for additional data
-  
-  @@index([publishedAt])
-  @@index([channelId])
-  @@index([addedAt])
-}
