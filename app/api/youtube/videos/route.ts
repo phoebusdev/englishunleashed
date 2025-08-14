@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { unstable_noStore as noStore } from 'next/cache'
 import { fetchYouTubeRSSFeed } from '@/lib/youtube-rss'
 import { env } from '@/env.mjs'
+import { prisma } from '@/lib/db'
 
 // In-memory cache for videos
 let videoCache: {
@@ -75,7 +76,8 @@ export async function GET(request: Request) {
         videos: videoCache.data,
         cached: true,
         cacheAge: Math.floor((Date.now() - videoCache.timestamp) / 1000 / 60), // minutes
-        method: 'rss',
+        totalCount: videoCache.data.length,
+        method: 'cache',
         debug: debug ? debugInfo : undefined
       })
     }
@@ -84,12 +86,81 @@ export async function GET(request: Request) {
     debugInfo.fetchStartTime = Date.now()
     
     // Fetch fresh data from RSS (no API quota!)
-    const videos = await fetchYouTubeRSSFeed(channelId)
+    const rssVideos = await fetchYouTubeRSSFeed(channelId)
     
     debugInfo.fetchDuration = Date.now() - debugInfo.fetchStartTime
-    debugInfo.videosFound = videos.length
+    debugInfo.rssVideosFound = rssVideos.length
     
-    console.log(`✅ Fetched ${videos.length} videos from RSS in ${debugInfo.fetchDuration}ms`)
+    console.log(`✅ Fetched ${rssVideos.length} videos from RSS in ${debugInfo.fetchDuration}ms`)
+    
+    // Store/update RSS videos in database
+    if (rssVideos.length > 0) {
+      console.log('💾 Storing/updating videos in database...')
+      
+      for (const video of rssVideos) {
+        try {
+          await prisma.youTubeVideo.upsert({
+            where: { videoId: video.id },
+            update: {
+              title: video.title,
+              description: video.description,
+              thumbnailUrl: video.thumbnail.url,
+              thumbnailWidth: video.thumbnail.width,
+              thumbnailHeight: video.thumbnail.height,
+              lastSeenAt: new Date(),
+            },
+            create: {
+              videoId: video.id,
+              title: video.title,
+              description: video.description,
+              publishedAt: new Date(video.publishedAt),
+              thumbnailUrl: video.thumbnail.url,
+              thumbnailWidth: video.thumbnail.width,
+              thumbnailHeight: video.thumbnail.height,
+              channelId: channelId,
+              videoUrl: video.link || `https://www.youtube.com/watch?v=${video.id}`,
+            }
+          })
+        } catch (error) {
+          console.error(`Failed to store video ${video.id}:`, error)
+        }
+      }
+      
+      console.log('✅ Videos stored in database')
+    }
+    
+    // Fetch ALL videos from database (including historical)
+    const allVideos = await prisma.youTubeVideo.findMany({
+      where: channelId ? { channelId } : {},
+      orderBy: { publishedAt: 'desc' },
+      select: {
+        videoId: true,
+        title: true,
+        description: true,
+        publishedAt: true,
+        thumbnailUrl: true,
+        thumbnailWidth: true,
+        thumbnailHeight: true,
+        videoUrl: true,
+      }
+    })
+    
+    // Convert database videos to API format
+    const videos = allVideos.map(v => ({
+      id: v.videoId,
+      title: v.title,
+      description: v.description || '',
+      publishedAt: v.publishedAt.toISOString(),
+      thumbnail: {
+        url: v.thumbnailUrl || '',
+        width: v.thumbnailWidth || 1280,
+        height: v.thumbnailHeight || 720
+      },
+      link: v.videoUrl
+    }))
+    
+    debugInfo.totalVideosInDb = videos.length
+    console.log(`📚 Total videos in database: ${videos.length}`)
     
     // Store in cache
     if (videos.length > 0) {
@@ -97,16 +168,18 @@ export async function GET(request: Request) {
         data: videos,
         timestamp: Date.now()
       }
-      console.log('💾 Videos cached for 5 minutes')
+      console.log('💾 All videos cached for 5 minutes')
     } else {
-      console.warn('⚠️  No videos found in RSS feed')
-      debugInfo.warning = 'RSS feed returned no videos - check channel ID or channel may have no public videos'
+      console.warn('⚠️  No videos found')
+      debugInfo.warning = 'No videos in database - RSS feed may have returned no videos'
     }
 
     return NextResponse.json({ 
       videos,
       cached: false,
-      method: 'rss',
+      method: 'database+rss',
+      totalCount: videos.length,
+      newFromRss: rssVideos.length,
       debug: debug ? debugInfo : undefined
     })
   } catch (error) {
@@ -125,15 +198,60 @@ export async function GET(request: Request) {
         videos: videoCache.data,
         cached: true,
         cacheAge: Math.floor((Date.now() - videoCache.timestamp) / 1000 / 60), // minutes
+        totalCount: videoCache.data.length,
         error: 'Failed to fetch fresh data, using cache',
         debug: debug ? debugInfo : undefined
       })
     }
     
-    // No cache available
+    // Try to fetch from database as fallback
+    try {
+      console.log('📚 Attempting to fetch from database as fallback...')
+      const dbVideos = await prisma.youTubeVideo.findMany({
+        orderBy: { publishedAt: 'desc' },
+        select: {
+          videoId: true,
+          title: true,
+          description: true,
+          publishedAt: true,
+          thumbnailUrl: true,
+          thumbnailWidth: true,
+          thumbnailHeight: true,
+          videoUrl: true,
+        }
+      })
+      
+      const videos = dbVideos.map(v => ({
+        id: v.videoId,
+        title: v.title,
+        description: v.description || '',
+        publishedAt: v.publishedAt.toISOString(),
+        thumbnail: {
+          url: v.thumbnailUrl || '',
+          width: v.thumbnailWidth || 1280,
+          height: v.thumbnailHeight || 720
+        },
+        link: v.videoUrl
+      }))
+      
+      if (videos.length > 0) {
+        return NextResponse.json({ 
+          videos,
+          cached: false,
+          method: 'database-fallback',
+          totalCount: videos.length,
+          error: 'RSS failed, using database',
+          debug: debug ? debugInfo : undefined
+        })
+      }
+    } catch (dbError) {
+      console.error('Database fallback also failed:', dbError)
+    }
+    
+    // No data available anywhere
     return NextResponse.json({ 
       videos: [],
-      error: 'Unable to fetch videos',
+      error: 'Unable to fetch videos from any source',
       cached: false,
       debug: debug ? debugInfo : undefined
     }, { status: 500 })
