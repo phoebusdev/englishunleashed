@@ -26,10 +26,10 @@ fi
 echo "🔧 Generating Prisma client..."
 npx prisma generate
 
-# Run migrations in production
+# Push schema changes in production (using db:push instead of migrate for existing database)
 if [ "$VERCEL" = "1" ]; then
-  echo "🔄 Running database migrations..."
-  npx prisma migrate deploy
+  echo "🔄 Syncing database schema..."
+  npx prisma db push --skip-generate
 fi
 
 # Run the Next.js build directly (not npm run build to avoid recursion)

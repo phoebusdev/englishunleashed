@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env FORCE_COLOR=1 next dev --turbo",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "prisma generate && next build",
     "build:vercel": "bash scripts/build-production.sh",
     "start": "next start",
     "lint": "next lint",
