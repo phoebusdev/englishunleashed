@@ -1,9 +1,19 @@
 import { NextResponse } from 'next/server'
 import { unstable_noStore as noStore } from 'next/cache'
 import { fetchYouTubeRSSFeed } from '@/lib/youtube-rss'
+import { historicalVideos } from '@/lib/youtube-videos-static'
 
-// Simple in-memory storage (persists for the lifetime of the server)
+// Initialize storage with historical videos
 const videoStorage = new Map<string, any>()
+
+// Pre-populate with historical videos
+for (const video of historicalVideos) {
+  videoStorage.set(video.id, {
+    ...video,
+    historical: true,
+    lastSeen: Date.now()
+  })
+}
 
 export async function GET(request: Request) {
   noStore()
@@ -26,11 +36,14 @@ export async function GET(request: Request) {
     console.log(`📺 Fetching videos from RSS for channel: ${channelId}`)
     const rssVideos = await fetchYouTubeRSSFeed(channelId)
     
-    // Add new videos to our storage
+    // Update storage with RSS videos (RSS has latest info)
     for (const video of rssVideos) {
+      const existing = videoStorage.get(video.id)
       videoStorage.set(video.id, {
         ...video,
-        lastSeen: Date.now()
+        historical: existing?.historical || false,
+        lastSeen: Date.now(),
+        fromRss: true
       })
     }
     
