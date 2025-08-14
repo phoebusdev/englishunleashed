@@ -26,8 +26,14 @@ fi
 echo "🔧 Generating Prisma client..."
 npx prisma generate
 
-# Run the build
+# Run migrations in production
+if [ "$VERCEL" = "1" ]; then
+  echo "🔄 Running database migrations..."
+  npx prisma migrate deploy
+fi
+
+# Run the Next.js build directly (not npm run build to avoid recursion)
 echo "🏗️ Building application..."
-npm run build
+npx next build
 
 echo "✅ Production build complete!"
