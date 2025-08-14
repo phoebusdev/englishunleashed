@@ -2,6 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ CRITICAL DATABASE WARNING ⚠️
+
+**NEVER CHANGE THE DATABASE PROVIDER IN schema.prisma FROM PostgreSQL**
+
+```prisma
+// This MUST always be PostgreSQL for Vercel deployment
+datasource db {
+  provider = "postgresql"  // ✅ CORRECT - DO NOT CHANGE
+  url      = env("DATABASE_URL")
+}
+```
+
+**Changing to SQLite will break production deployment!** See docs/DATABASE-CONFIGURATION.md for details.
+
 ## Project Overview
 
 English Unleashed - Next.js e-commerce platform for educational content with YouTube integration, Stripe payment processing, and a comprehensive quiz system. Built on Next.js Enterprise Boilerplate foundation.
