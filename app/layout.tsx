@@ -3,6 +3,8 @@ import "styles/globals.css"
 import { Metadata } from "next"
 import { ThemeProvider, AuthProvider } from "./providers"
 import { Navigation } from "../components/Navigation"
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://englishunleashed.com'),
@@ -68,6 +70,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider>
             <Navigation />
             <main>{children}</main>
+            <Analytics />
+            <SpeedInsights />
           </ThemeProvider>
         </AuthProvider>
       </body>
