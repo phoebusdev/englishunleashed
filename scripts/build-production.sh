@@ -26,11 +26,11 @@ fi
 echo "🔧 Generating Prisma client..."
 npx prisma generate
 
-# Push schema changes in production (using db:push instead of migrate for existing database)
-if [ "$VERCEL" = "1" ]; then
-  echo "🔄 Syncing database schema..."
-  npx prisma db push --skip-generate
-fi
+# Skip database sync for now - not using YouTubeVideo table
+# if [ "$VERCEL" = "1" ]; then
+#   echo "🔄 Syncing database schema..."
+#   npx prisma db push --skip-generate
+# fi
 
 # Run the Next.js build directly (not npm run build to avoid recursion)
 echo "🏗️ Building application..."

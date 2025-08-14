@@ -1,5 +1,4 @@
 import { type Metadata } from 'next'
-import { unstable_noStore as noStore } from 'next/cache'
 
 export const metadata: Metadata = {
   title: 'English Learning Videos',
@@ -23,11 +22,10 @@ interface YouTubeVideo {
 }
 
 export default async function VideosPage() {
-  noStore()
-  
   // Fetch videos from our API
   let videos: YouTubeVideo[] = []
   let hasError = false
+  let isUsingRss = false
   
   try {
     const baseUrl = process.env.VERCEL_URL 
@@ -35,12 +33,14 @@ export default async function VideosPage() {
       : 'http://localhost:3000'
     
     const response = await fetch(`${baseUrl}/api/youtube/videos`, {
-      next: { revalidate: 300 } // Cache for 5 minutes
+      next: { revalidate: 300 }, // Cache for 5 minutes
+      cache: 'force-cache'
     })
     
     if (response.ok) {
       const data = await response.json()
       videos = data.videos || []
+      isUsingRss = data.method?.includes('rss') || false
       console.log(`Loaded ${videos.length} videos (${data.method})`)
     } else {
       console.error('Failed to fetch videos:', response.status)
@@ -95,9 +95,11 @@ export default async function VideosPage() {
                   />
                 </div>
                 <div className="p-6">
-                  <div className="text-sm text-purple-600 font-medium mb-2">
-                    Episode #{videos.length - index}
-                  </div>
+                  {!isUsingRss && (
+                    <div className="text-sm text-purple-600 font-medium mb-2">
+                      Episode #{videos.length - index}
+                    </div>
+                  )}
                   <h3 className="text-xl font-semibold mb-2 line-clamp-2">
                     {video.title}
                   </h3>

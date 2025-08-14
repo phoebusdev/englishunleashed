@@ -303,27 +303,6 @@ model DownloadLog {
   @@index([createdAt])
 }
 
-// YouTube Video model for storing all channel videos
-model YouTubeVideo {
-  id          String   @id @default(cuid())
-  videoId     String   @unique // YouTube video ID
-  title       String
-  description String?
-  publishedAt DateTime
-  thumbnailUrl String?
-  thumbnailWidth Int   @default(1280)
-  thumbnailHeight Int  @default(720)
-  videoUrl    String   // Full YouTube URL
-  duration    String?  // Video duration if available
-  viewCount   String?  // View count if available
-  source      String   @default("rss") // "rss", "api", "manual"
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  @@index([publishedAt])
-  @@index([videoId])
-}
-
 // Email Queue model for async email processing
 model EmailQueue {
   id          String   @id @default(cuid())
