@@ -29,6 +29,8 @@
     "youtube:sync": "tsx scripts/manual-youtube-sync.ts",
     "youtube:rss-sync": "tsx scripts/sync-youtube-rss.ts",
     "youtube:sync-history": "tsx scripts/sync-youtube-history.ts",
+    "youtube:import-history": "tsx scripts/import-full-youtube-history.ts",
+    "youtube:import-api": "tsx scripts/import-youtube-via-api.ts",
     "sync:videos": "tsx scripts/sync-initial-videos.ts",
     "coupling-graph": "npx madge --extensions js,jsx,ts,tsx,css,md,mdx ./ --exclude '.next|tailwind.config.js|reset.d.ts|prettier.config.js|postcss.config.js|playwright.config.ts|next.config.js|next-env.d.ts|instrumentation.ts|e2e/|README.md|.storybook/|.eslintrc.js' --image graph.svg"
   },

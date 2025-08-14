@@ -120,23 +120,72 @@ curl https://your-site.vercel.app/api/youtube/videos?debug=true
 | First sync gets only 15 | History incomplete initially | Use API to import full history once |
 | Deleted YouTube videos | Links break but data remains | Videos stay in your database |
 
-## Manual Full History Import
+## Full History Import (One-Time Setup)
 
-If you want to import your ENTIRE channel history (beyond the 15 RSS videos):
+To import your ENTIRE channel history (all videos, not just the 15 from RSS):
 
-1. **Use YouTube API** (one-time, uses quota)
-   - Modify sync script to use YouTube Data API
-   - Fetch all videos with pagination
-   - Run once to populate history
+### Option 1: Via Admin API (Recommended for Production)
 
-2. **Export/Import** 
-   - Export video list from YouTube Studio
-   - Create import script for CSV data
-   - Run once to populate database
+1. **Ensure YouTube API Key is set**:
+   ```bash
+   # In Vercel Dashboard or .env.local
+   YOUTUBE_API_KEY=your-api-key-here
+   YOUTUBE_CHANNEL_ID=your-channel-id
+   ```
 
-3. **Keep Going Forward**
-   - After initial import, RSS handles all new videos
-   - No need for API quota ongoing
+2. **After deployment, visit admin endpoint**:
+   ```bash
+   # Check current status (must be logged in as admin)
+   GET https://your-site.vercel.app/api/admin/import-youtube-history
+   
+   # Import all videos (POST as admin)
+   POST https://your-site.vercel.app/api/admin/import-youtube-history
+   {
+     "apiKey": "your-youtube-api-key",  // Optional if set in env
+     "channelId": "your-channel-id"     // Optional if set in env
+   }
+   ```
+
+3. **Or use the convenience script**:
+   ```bash
+   # For local development
+   pnpm dev  # Start server in another terminal
+   pnpm youtube:import-api
+   
+   # For production (after deployment)
+   NEXT_PUBLIC_SITE_URL=https://your-site.vercel.app pnpm youtube:import-api
+   ```
+
+### Option 2: Direct Script (Local Development)
+
+```bash
+# Ensure YouTube API key is in .env.local
+YOUTUBE_API_KEY=your-api-key-here
+
+# Run the import
+pnpm youtube:import-history
+```
+
+### API Quota Usage
+
+- **Cost**: ~100 API quota units per 50 videos
+- **Daily Limit**: 10,000 units (enough for ~5,000 videos)
+- **One-Time Only**: After import, RSS handles all new videos (zero quota)
+
+### What Happens During Import
+
+1. Fetches channel's "uploads" playlist
+2. Retrieves ALL videos with pagination (50 per page)
+3. Stores each video in database with metadata
+4. Updates existing videos if already present
+5. Reports statistics when complete
+
+### After Import
+
+- Your videos page shows complete history ✅
+- New videos added automatically via RSS ✅  
+- No more API quota needed ✅
+- Old videos permanently stored ✅
 
 ## Troubleshooting
 
