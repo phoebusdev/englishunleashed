@@ -7,13 +7,19 @@
 
 import { prisma } from './db'
 
-interface YouTubeRSSVideo {
+export interface YouTubeRSSVideo {
   id: string
   title: string
   description: string
   publishedAt: string
-  thumbnail: string
+  thumbnail: {
+    url: string
+    width: number
+    height: number
+  }
   link: string
+  duration?: string
+  viewCount?: string
 }
 
 /**
@@ -43,9 +49,11 @@ function parseYouTubeRSS(xml: string): YouTubeRSSVideo[] {
     const publishedMatch = entry.match(/<published>([^<]+)<\/published>/)
     const publishedAt = publishedMatch ? publishedMatch[1] : new Date().toISOString()
     
-    // Extract thumbnail
-    const thumbnailMatch = entry.match(/<media:thumbnail url="([^"]+)"/)
-    const thumbnail = thumbnailMatch ? thumbnailMatch[1] : ''
+    // Extract thumbnail with dimensions
+    const thumbnailMatch = entry.match(/<media:thumbnail url="([^"]+)"(?:\s+width="(\d+)"\s+height="(\d+)")?/)
+    const thumbnailUrl = thumbnailMatch ? thumbnailMatch[1] : ''
+    const thumbnailWidth = thumbnailMatch && thumbnailMatch[2] ? parseInt(thumbnailMatch[2]) : 1280
+    const thumbnailHeight = thumbnailMatch && thumbnailMatch[3] ? parseInt(thumbnailMatch[3]) : 720
     
     // Extract link
     const linkMatch = entry.match(/<link rel="alternate" href="([^"]+)"/)
@@ -57,7 +65,11 @@ function parseYouTubeRSS(xml: string): YouTubeRSSVideo[] {
         title: decodeHTMLEntities(title),
         description: decodeHTMLEntities(description),
         publishedAt,
-        thumbnail,
+        thumbnail: {
+          url: thumbnailUrl,
+          width: thumbnailWidth,
+          height: thumbnailHeight
+        },
         link
       })
     }
