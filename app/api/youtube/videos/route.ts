@@ -1,19 +1,7 @@
 import { NextResponse } from 'next/server'
 import { unstable_noStore as noStore } from 'next/cache'
 import { fetchYouTubeRSSFeed } from '@/lib/youtube-rss'
-import { historicalVideos } from '@/lib/youtube-videos-static'
-
-// Initialize storage with historical videos
-const videoStorage = new Map<string, any>()
-
-// Pre-populate with historical videos
-for (const video of historicalVideos) {
-  videoStorage.set(video.id, {
-    ...video,
-    historical: true,
-    lastSeen: Date.now()
-  })
-}
+import { prisma } from '@/lib/db'
 
 export async function GET(request: Request) {
   noStore()
@@ -25,37 +13,83 @@ export async function GET(request: Request) {
     
     if (!channelId) {
       console.error('No YouTube channel ID configured')
+      
+      // Still return videos from database even without channel ID
+      const dbVideos = await prisma.youTubeVideo.findMany({
+        orderBy: { publishedAt: 'desc' }
+      })
+      
       return NextResponse.json({ 
-        videos: [],
+        videos: dbVideos.map(v => ({
+          id: v.videoId,
+          title: v.title,
+          description: v.description || '',
+          publishedAt: v.publishedAt.toISOString(),
+          thumbnail: {
+            url: v.thumbnailUrl || '',
+            width: v.thumbnailWidth,
+            height: v.thumbnailHeight
+          }
+        })),
         error: 'Channel ID not configured',
-        method: 'none'
-      }, { status: 500 })
+        method: 'database-only'
+      })
     }
 
     // Fetch fresh videos from RSS
     console.log(`📺 Fetching videos from RSS for channel: ${channelId}`)
     const rssVideos = await fetchYouTubeRSSFeed(channelId)
     
-    // Update storage with RSS videos (RSS has latest info)
+    // Update database with RSS videos (upsert to avoid duplicates)
     for (const video of rssVideos) {
-      const existing = videoStorage.get(video.id)
-      videoStorage.set(video.id, {
-        ...video,
-        historical: existing?.historical || false,
-        lastSeen: Date.now(),
-        fromRss: true
+      await prisma.youTubeVideo.upsert({
+        where: { videoId: video.id },
+        update: {
+          title: video.title,
+          description: video.description,
+          thumbnailUrl: video.thumbnail.url,
+          thumbnailWidth: video.thumbnail.width,
+          thumbnailHeight: video.thumbnail.height,
+          source: 'rss',
+          updatedAt: new Date()
+        },
+        create: {
+          videoId: video.id,
+          title: video.title,
+          description: video.description,
+          publishedAt: new Date(video.publishedAt),
+          thumbnailUrl: video.thumbnail.url,
+          thumbnailWidth: video.thumbnail.width,
+          thumbnailHeight: video.thumbnail.height,
+          videoUrl: video.link || `https://www.youtube.com/watch?v=${video.id}`,
+          source: 'rss'
+        }
       })
     }
     
-    // Get all stored videos (combines historical + new)
-    const allVideos = Array.from(videoStorage.values())
-      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    // Get all videos from database (includes historical + new)
+    const allVideos = await prisma.youTubeVideo.findMany({
+      orderBy: { publishedAt: 'desc' }
+    })
     
-    console.log(`✅ RSS found ${rssVideos.length} videos, total stored: ${allVideos.length}`)
+    console.log(`✅ RSS found ${rssVideos.length} videos, database has ${allVideos.length} total`)
+    
+    // Convert to API format
+    const formattedVideos = allVideos.map(v => ({
+      id: v.videoId,
+      title: v.title,
+      description: v.description || '',
+      publishedAt: v.publishedAt.toISOString(),
+      thumbnail: {
+        url: v.thumbnailUrl || '',
+        width: v.thumbnailWidth,
+        height: v.thumbnailHeight
+      }
+    }))
     
     return NextResponse.json({ 
-      videos: allVideos.length > 0 ? allVideos : rssVideos,
-      method: 'rss+memory',
+      videos: formattedVideos,
+      method: 'rss+database',
       rssCount: rssVideos.length,
       totalCount: allVideos.length,
       cached: false
@@ -64,17 +98,32 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error fetching videos:', error)
     
-    // Return any videos we have in memory
-    const cachedVideos = Array.from(videoStorage.values())
-      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-    
-    if (cachedVideos.length > 0) {
-      return NextResponse.json({ 
-        videos: cachedVideos,
-        method: 'memory-fallback',
-        totalCount: cachedVideos.length,
-        error: 'RSS failed, using cached videos'
+    // Return videos from database as fallback
+    try {
+      const cachedVideos = await prisma.youTubeVideo.findMany({
+        orderBy: { publishedAt: 'desc' }
       })
+      
+      if (cachedVideos.length > 0) {
+        return NextResponse.json({ 
+          videos: cachedVideos.map(v => ({
+            id: v.videoId,
+            title: v.title,
+            description: v.description || '',
+            publishedAt: v.publishedAt.toISOString(),
+            thumbnail: {
+              url: v.thumbnailUrl || '',
+              width: v.thumbnailWidth,
+              height: v.thumbnailHeight
+            }
+          })),
+          method: 'database-fallback',
+          totalCount: cachedVideos.length,
+          error: 'RSS failed, using database videos'
+        })
+      }
+    } catch (dbError) {
+      console.error('Database fallback also failed:', dbError)
     }
     
     return NextResponse.json({ 
@@ -85,7 +134,7 @@ export async function GET(request: Request) {
   }
 }
 
-// POST endpoint to manually add historical videos if needed
+// POST endpoint to manually add historical videos
 export async function POST(request: Request) {
   try {
     const { videos } = await request.json()
@@ -96,22 +145,45 @@ export async function POST(request: Request) {
       }, { status: 400 })
     }
     
-    // Add videos to storage
+    // Add videos to database
+    let addedCount = 0
     for (const video of videos) {
       if (video.id) {
-        videoStorage.set(video.id, {
-          ...video,
-          addedManually: true,
-          lastSeen: Date.now()
-        })
+        try {
+          await prisma.youTubeVideo.upsert({
+            where: { videoId: video.id },
+            update: {
+              title: video.title,
+              description: video.description || '',
+              thumbnailUrl: video.thumbnail?.url || '',
+              thumbnailWidth: video.thumbnail?.width || 1280,
+              thumbnailHeight: video.thumbnail?.height || 720,
+              updatedAt: new Date()
+            },
+            create: {
+              videoId: video.id,
+              title: video.title,
+              description: video.description || '',
+              publishedAt: new Date(video.publishedAt),
+              thumbnailUrl: video.thumbnail?.url || '',
+              thumbnailWidth: video.thumbnail?.width || 1280,
+              thumbnailHeight: video.thumbnail?.height || 720,
+              videoUrl: `https://www.youtube.com/watch?v=${video.id}`,
+              source: 'manual'
+            }
+          })
+          addedCount++
+        } catch (err) {
+          console.error(`Failed to add video ${video.id}:`, err)
+        }
       }
     }
     
-    const totalVideos = videoStorage.size
+    const totalVideos = await prisma.youTubeVideo.count()
     
     return NextResponse.json({
       success: true,
-      message: `Added ${videos.length} videos`,
+      message: `Added/updated ${addedCount} videos`,
       totalVideos
     })
     
