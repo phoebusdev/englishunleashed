@@ -2,6 +2,16 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import {
+  AdminCard,
+  AdminButton,
+  FormInput,
+  FormTextarea,
+  ConfirmDialog,
+  EmptyState,
+  NoDataIcon,
+  useToast
+} from '@/components/admin/ui'
 
 interface Question {
   text: string
@@ -34,18 +44,17 @@ interface Pack {
 
 export default function QuizBuilder({ packs }: { packs: Pack[] }) {
   const router = useRouter()
+  const { toast } = useToast()
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null)
   const [quizTitle, setQuizTitle] = useState('')
   const [quizDescription, setQuizDescription] = useState('')
   const [questions, setQuestions] = useState<Question[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [questionToDelete, setQuestionToDelete] = useState<number | null>(null)
 
   const handlePackSelect = (pack: Pack) => {
     setSelectedPack(pack)
-    setError('')
-    setSuccess('')
     
     if (pack.quiz) {
       // Load existing quiz data
@@ -87,8 +96,17 @@ export default function QuizBuilder({ packs }: { packs: Pack[] }) {
     ])
   }
 
-  const removeQuestion = (index: number) => {
-    setQuestions(questions.filter((_, i) => i !== index))
+  const handleDeleteQuestion = (index: number) => {
+    setQuestionToDelete(index)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDeleteQuestion = () => {
+    if (questionToDelete !== null) {
+      setQuestions(questions.filter((_, i) => i !== questionToDelete))
+      setQuestionToDelete(null)
+      toast('success', 'Question deleted', 'Question removed from quiz')
+    }
   }
 
   const updateQuestion = (index: number, field: keyof Question, value: any) => {
@@ -108,43 +126,39 @@ export default function QuizBuilder({ packs }: { packs: Pack[] }) {
 
   const handleSubmit = async () => {
     if (!selectedPack) {
-      setError('Please select a pack')
+      toast('error', 'Validation Error', 'Please select a pack')
       return
     }
 
     if (!quizTitle) {
-      setError('Please enter a quiz title')
+      toast('error', 'Validation Error', 'Please enter a quiz title')
       return
     }
 
     if (questions.length === 0) {
-      setError('Please add at least one question')
+      toast('error', 'Validation Error', 'Please add at least one question')
       return
     }
 
     // Validate all questions
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i]
-      if (!q.text) {
-        setError(`Question ${i + 1} is missing text`)
+      if (!q?.text) {
+        toast('error', 'Validation Error', `Question ${i + 1} is missing text`)
         return
       }
       if (q.options.some(opt => !opt)) {
-        setError(`Question ${i + 1} has empty options`)
+        toast('error', 'Validation Error', `Question ${i + 1} has empty options`)
         return
       }
     }
 
     setIsSubmitting(true)
-    setError('')
 
     try {
-      const endpoint = selectedPack.quiz 
-        ? '/api/admin/quiz'
-        : '/api/admin/quiz'
-      
+      const endpoint = '/api/admin/quiz'
       const method = selectedPack.quiz ? 'PUT' : 'POST'
-      
+
       const body = selectedPack.quiz
         ? { id: selectedPack.quiz.id, title: quizTitle, description: quizDescription, questions }
         : { packId: selectedPack.id, title: quizTitle, description: quizDescription, questions }
@@ -159,25 +173,36 @@ export default function QuizBuilder({ packs }: { packs: Pack[] }) {
         throw new Error('Failed to save quiz')
       }
 
-      setSuccess(selectedPack.quiz ? 'Quiz updated successfully!' : 'Quiz created successfully!')
-      
-      // Refresh the page after a short delay
-      setTimeout(() => {
-        router.refresh()
-      }, 2000)
+      toast(
+        'success',
+        selectedPack.quiz ? 'Quiz Updated' : 'Quiz Created',
+        `${quizTitle} has been saved successfully`
+      )
+
+      // Refresh the page
+      router.refresh()
     } catch (err) {
-      setError('Failed to save quiz. Please try again.')
+      toast('error', 'Save Failed', 'Failed to save quiz. Please try again.')
       console.error(err)
     } finally {
       setIsSubmitting(false)
     }
   }
 
+  if (packs.length === 0) {
+    return (
+      <EmptyState
+        title="No packs available"
+        description="Create a pack first before building quizzes"
+        icon={<NoDataIcon />}
+      />
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Pack Selection */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Select Pack</h2>
+      <AdminCard title="Select Pack" description="Choose a pack to create or edit its quiz">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {packs.map((pack) => (
             <button
@@ -199,52 +224,43 @@ export default function QuizBuilder({ packs }: { packs: Pack[] }) {
             </button>
           ))}
         </div>
-      </div>
+      </AdminCard>
 
       {selectedPack && (
         <>
           {/* Quiz Details */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Quiz Details</h2>
+          <AdminCard title="Quiz Details" description="Basic quiz information">
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Quiz Title
-                </label>
-                <input
-                  type="text"
-                  value={quizTitle}
-                  onChange={(e) => setQuizTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#20b2aa]"
-                  placeholder="Enter quiz title"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description (optional)
-                </label>
-                <textarea
-                  value={quizDescription}
-                  onChange={(e) => setQuizDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#20b2aa]"
-                  rows={3}
-                  placeholder="Enter quiz description"
-                />
-              </div>
+              <FormInput
+                label="Quiz Title"
+                value={quizTitle}
+                onChange={(e) => setQuizTitle(e.target.value)}
+                placeholder="Enter quiz title"
+                required
+              />
+              <FormTextarea
+                label="Description (optional)"
+                value={quizDescription}
+                onChange={(e) => setQuizDescription(e.target.value)}
+                rows={3}
+                placeholder="Enter quiz description"
+              />
             </div>
-          </div>
+          </AdminCard>
 
           {/* Questions */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Questions</h2>
-              <button
-                onClick={addQuestion}
-                className="px-4 py-2 bg-[#20b2aa] text-white rounded-md hover:bg-[#0f8080] transition-colors"
-              >
+          <AdminCard
+            title="Questions"
+            description={`${questions.length} question${questions.length !== 1 ? 's' : ''} in quiz`}
+            actions={
+              <AdminButton onClick={addQuestion} size="sm">
+                <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
                 Add Question
-              </button>
-            </div>
+              </AdminButton>
+            }
+          >
 
             <div className="space-y-6">
               {questions.map((question, qIndex) => (
@@ -252,32 +268,29 @@ export default function QuizBuilder({ packs }: { packs: Pack[] }) {
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="font-semibold">Question {qIndex + 1}</h3>
                     {questions.length > 1 && (
-                      <button
-                        onClick={() => removeQuestion(qIndex)}
-                        className="text-red-600 hover:text-red-700"
+                      <AdminButton
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDeleteQuestion(qIndex)}
                       >
                         Remove
-                      </button>
+                      </AdminButton>
                     )}
                   </div>
 
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Question Text
-                      </label>
-                      <textarea
-                        value={question.text}
-                        onChange={(e) => updateQuestion(qIndex, 'text', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#20b2aa]"
-                        rows={2}
-                        placeholder="Enter question text"
-                      />
-                    </div>
+                    <FormTextarea
+                      label="Question Text"
+                      value={question.text}
+                      onChange={(e) => updateQuestion(qIndex, 'text', e.target.value)}
+                      rows={2}
+                      placeholder="Enter question text"
+                      required
+                    />
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Answer Options
+                        Answer Options <span className="text-red-500">*</span>
                       </label>
                       <div className="space-y-2">
                         {question.options.map((option, oIndex) => (
@@ -304,54 +317,50 @@ export default function QuizBuilder({ packs }: { packs: Pack[] }) {
                       </p>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Explanation (optional)
-                      </label>
-                      <textarea
-                        value={question.explanation}
-                        onChange={(e) => updateQuestion(qIndex, 'explanation', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#20b2aa]"
-                        rows={2}
-                        placeholder="Explain why this answer is correct"
-                      />
-                    </div>
+                    <FormTextarea
+                      label="Explanation (optional)"
+                      value={question.explanation}
+                      onChange={(e) => updateQuestion(qIndex, 'explanation', e.target.value)}
+                      rows={2}
+                      placeholder="Explain why this answer is correct"
+                    />
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </AdminCard>
 
           {/* Actions */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="mb-4 p-3 bg-green-50 text-green-700 rounded-md">
-                {success}
-              </div>
-            )}
-            <div className="flex gap-4">
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="px-6 py-3 bg-[#20b2aa] text-white rounded-md hover:bg-[#0f8080] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isSubmitting ? 'Saving...' : selectedPack.quiz ? 'Update Quiz' : 'Create Quiz'}
-              </button>
-              <button
+          <AdminCard>
+            <div className="flex justify-end gap-4">
+              <AdminButton
+                variant="outline"
                 onClick={() => router.push('/admin')}
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
               >
                 Cancel
-              </button>
+              </AdminButton>
+              <AdminButton
+                onClick={handleSubmit}
+                isLoading={isSubmitting}
+                disabled={isSubmitting}
+              >
+                {selectedPack.quiz ? 'Update Quiz' : 'Create Quiz'}
+              </AdminButton>
             </div>
-          </div>
+          </AdminCard>
         </>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete Question"
+        description={`Are you sure you want to delete question ${(questionToDelete ?? 0) + 1}? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={confirmDeleteQuestion}
+      />
     </div>
   )
 }
