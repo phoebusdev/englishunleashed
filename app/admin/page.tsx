@@ -1,23 +1,10 @@
-import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
-import { authOptions } from '@/lib/auth'
+import { requireAdmin } from '@/lib/admin/auth'
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
+import { AdminCard, AdminButton } from '@/components/admin/ui'
 
 export default async function AdminDashboard() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session?.user?.email) {
-    redirect('/login')
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email }
-  })
-
-  if (!user?.isAdmin) {
-    redirect('/account')
-  }
+  await requireAdmin()
 
   // Get dashboard stats
   const [userCount, orderCount, packCount, revenue] = await Promise.all([
@@ -31,81 +18,84 @@ export default async function AdminDashboard() {
   ])
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
-        
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Total Users</h3>
-            <p className="text-2xl font-bold text-gray-900">{userCount}</p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        <p className="mt-2 text-gray-600">Welcome to the admin control panel</p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <AdminCard>
+          <div>
+            <p className="text-sm font-medium text-gray-600">Total Users</p>
+            <p className="text-3xl font-bold text-gray-900 mt-2">{userCount}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Total Orders</h3>
-            <p className="text-2xl font-bold text-gray-900">{orderCount}</p>
+        </AdminCard>
+        <AdminCard>
+          <div>
+            <p className="text-sm font-medium text-gray-600">Total Orders</p>
+            <p className="text-3xl font-bold text-gray-900 mt-2">{orderCount}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Total Packs</h3>
-            <p className="text-2xl font-bold text-gray-900">{packCount}</p>
+        </AdminCard>
+        <AdminCard>
+          <div>
+            <p className="text-sm font-medium text-gray-600">Total Packs</p>
+            <p className="text-3xl font-bold text-gray-900 mt-2">{packCount}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Total Revenue</h3>
-            <p className="text-2xl font-bold text-gray-900">
+        </AdminCard>
+        <AdminCard>
+          <div>
+            <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+            <p className="text-3xl font-bold text-gray-900 mt-2">
               £{((revenue._sum.amount || 0) / 100).toFixed(2)}
             </p>
           </div>
-        </div>
+        </AdminCard>
+      </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link
-              href="/admin/pack/new"
-              className="px-4 py-2 bg-[#20b2aa] text-white rounded-md text-center hover:bg-[#0f8080] transition-colors"
-            >
-              Create Pack
-            </Link>
-            <Link
-              href="/admin/quiz-builder"
-              className="px-4 py-2 bg-[#ff6b8a] text-white rounded-md text-center hover:bg-[#ff5577] transition-colors"
-            >
-              Quiz Builder
-            </Link>
-            <Link
-              href="/admin/users"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md text-center hover:bg-blue-700 transition-colors"
-            >
-              Manage Users
-            </Link>
-            <Link
-              href="/admin/orders"
-              className="px-4 py-2 bg-green-600 text-white rounded-md text-center hover:bg-green-700 transition-colors"
-            >
-              View Orders
-            </Link>
-          </div>
-        </div>
-
-        {/* Pack Management */}
-        <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Pack Management</h2>
-            <Link
-              href="/admin/pack/new"
-              className="px-4 py-2 bg-[#20b2aa] text-white rounded-md hover:bg-[#0f8080] transition-colors"
-            >
-              New Pack
-            </Link>
-          </div>
-          <Link
-            href="/admin/packs"
-            className="text-purple-600 hover:text-purple-700"
-          >
-            View all packs →
+      {/* Quick Actions */}
+      <AdminCard title="Quick Actions" description="Common admin tasks">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Link href="/admin/pack/new">
+            <AdminButton className="w-full">Create Pack</AdminButton>
+          </Link>
+          <Link href="/admin/quiz-builder">
+            <AdminButton variant="secondary" className="w-full">Quiz Builder</AdminButton>
+          </Link>
+          <Link href="/admin/users">
+            <AdminButton variant="outline" className="w-full">Manage Users</AdminButton>
+          </Link>
+          <Link href="/admin/orders">
+            <AdminButton variant="outline" className="w-full">View Orders</AdminButton>
           </Link>
         </div>
+      </AdminCard>
+
+      {/* Management Links */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <AdminCard
+          title="Pack Management"
+          description="Create, edit, and manage educational packs"
+          actions={
+            <Link href="/admin/pack/new">
+              <AdminButton size="sm">New Pack</AdminButton>
+            </Link>
+          }
+        >
+          <Link href="/admin/packs" className="text-[#20b2aa] hover:text-[#0f8080] font-medium">
+            View all packs →
+          </Link>
+        </AdminCard>
+
+        <AdminCard
+          title="Analytics"
+          description="View business metrics and insights"
+        >
+          <Link href="/admin/analytics" className="text-[#20b2aa] hover:text-[#0f8080] font-medium">
+            View analytics dashboard →
+          </Link>
+        </AdminCard>
       </div>
     </div>
   )
