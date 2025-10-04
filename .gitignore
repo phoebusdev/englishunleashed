@@ -38,3 +38,7 @@ storybook-static/
 .env
 .env.local
 .env.production
+
+# Spec-kit files are committed in specdriven branch
+# .claude/
+# specs/
