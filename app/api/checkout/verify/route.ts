@@ -23,7 +23,16 @@ export async function POST(request: NextRequest) {
 
     // Retrieve the Stripe session
     const stripeSession = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['line_items']
+      expand: ['line_items', 'payment_link']
+    })
+
+    // Debug logging
+    console.log('[Verify] Session details:', {
+      id: stripeSession.id,
+      payment_status: stripeSession.payment_status,
+      payment_link: stripeSession.payment_link,
+      metadata: stripeSession.metadata,
+      customer_email: stripeSession.customer_email
     })
 
     if (stripeSession.payment_status !== 'paid') {
@@ -67,16 +76,23 @@ export async function POST(request: NextRequest) {
 
     // If no packId in metadata, try to find product by payment link ID
     if (!packId && stripeSession.payment_link) {
-      console.log('No packId in metadata, looking up by payment link:', stripeSession.payment_link)
+      // Handle both string ID and expanded object
+      const paymentLinkId = typeof stripeSession.payment_link === 'string'
+        ? stripeSession.payment_link
+        : stripeSession.payment_link.id
+
+      console.log('[Verify] No packId in metadata, looking up by payment link:', paymentLinkId)
 
       const product = await prisma.product.findFirst({
-        where: { stripePaymentLinkId: stripeSession.payment_link as string },
+        where: { stripePaymentLinkId: paymentLinkId },
         include: { packs: { orderBy: { order: 'asc' } } }
       })
 
       if (product && product.packs.length > 0) {
         packId = product.packs[0].id
-        console.log('Found pack via payment link:', packId)
+        console.log('[Verify] Found pack via payment link:', packId)
+      } else {
+        console.log('[Verify] No product found with stripePaymentLinkId:', paymentLinkId)
       }
     }
 

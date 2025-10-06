@@ -49,6 +49,15 @@ export async function POST(req: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
 
+        // Debug logging
+        console.log('[Webhook] Session details:', {
+          id: session.id,
+          payment_status: session.payment_status,
+          payment_link: session.payment_link,
+          metadata: session.metadata,
+          customer_email: session.customer_email
+        })
+
         // Get pack ID from metadata (handle both packId and packIds for backwards compatibility)
         let packId = session.metadata?.packId
         if (!packId && session.metadata?.packIds) {
@@ -59,16 +68,23 @@ export async function POST(req: Request) {
 
         // If no packId in metadata, try to find product by payment link ID
         if (!packId && session.payment_link) {
-          console.log('[Webhook] No packId in metadata, looking up by payment link:', session.payment_link)
+          // Handle both string ID and expanded object
+          const paymentLinkId = typeof session.payment_link === 'string'
+            ? session.payment_link
+            : session.payment_link.id
+
+          console.log('[Webhook] No packId in metadata, looking up by payment link:', paymentLinkId)
 
           const product = await prisma.product.findFirst({
-            where: { stripePaymentLinkId: session.payment_link as string },
+            where: { stripePaymentLinkId: paymentLinkId },
             include: { packs: { orderBy: { order: 'asc' } } }
           })
 
           if (product && product.packs.length > 0) {
             packId = product.packs[0].id
             console.log('[Webhook] Found pack via payment link:', packId)
+          } else {
+            console.log('[Webhook] No product found with stripePaymentLinkId:', paymentLinkId)
           }
         }
 
