@@ -1,4 +1,5 @@
 import { type Metadata } from 'next'
+import { getVideos } from '@/lib/videos'
 
 export const metadata: Metadata = {
   title: 'English Learning Videos',
@@ -9,47 +10,12 @@ export const metadata: Metadata = {
   },
 }
 
-interface YouTubeVideo {
-  id: string
-  title: string
-  description: string
-  publishedAt: string
-  thumbnail: {
-    url: string
-    width: number
-    height: number
-  }
-}
+// Revalidate every 5 minutes
+export const revalidate = 300
 
 export default async function VideosPage() {
-  // Fetch videos from our API
-  let videos: YouTubeVideo[] = []
-  let hasError = false
-  let isUsingRss = false
-  
-  try {
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : 'http://localhost:3000'
-    
-    const response = await fetch(`${baseUrl}/api/youtube/videos`, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-      cache: 'force-cache'
-    })
-    
-    if (response.ok) {
-      const data = await response.json()
-      videos = data.videos || []
-      isUsingRss = data.method?.includes('rss') || false
-      console.log(`Loaded ${videos.length} videos (${data.method})`)
-    } else {
-      console.error('Failed to fetch videos:', response.status)
-      hasError = true
-    }
-  } catch (error) {
-    console.error('Error fetching videos:', error)
-    hasError = true
-  }
+  // Fetch videos directly from server function
+  const videos = await getVideos()
   
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -63,15 +29,7 @@ export default async function VideosPage() {
           </p>
         </div>
 
-        {hasError && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
-            <p className="text-yellow-800">
-              Unable to load videos at the moment. Please try again later.
-            </p>
-          </div>
-        )}
-
-        {videos.length === 0 && !hasError ? (
+        {videos.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,11 +53,6 @@ export default async function VideosPage() {
                   />
                 </div>
                 <div className="p-6">
-                  {!isUsingRss && (
-                    <div className="text-sm text-purple-600 font-medium mb-2">
-                      Episode #{videos.length - index}
-                    </div>
-                  )}
                   <h3 className="text-xl font-semibold mb-2 line-clamp-2">
                     {video.title}
                   </h3>
