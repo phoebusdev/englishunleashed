@@ -35,8 +35,8 @@ export async function POST(request: NextRequest) {
 
     // Get pack IDs from metadata - handle both single packId and multiple packIds
     const packIds = stripeSession.metadata?.packIds?.split(',') || []
-    const packId = packIds[0] // Use first pack as primary
-    
+    let packId = packIds[0] // Use first pack as primary
+
     // Check if order already exists (to prevent duplicate processing)
     const existingOrder = await prisma.order.findFirst({
       where: { stripeId: sessionId }
@@ -46,12 +46,12 @@ export async function POST(request: NextRequest) {
       // Get pack info for existing order
       const existingPack = packId ? await prisma.pack.findUnique({
         where: { id: packId },
-        include: { 
+        include: {
           product: true,
           quiz: true
         }
       }) : null
-      
+
       return NextResponse.json({
         success: true,
         order: {
@@ -64,7 +64,22 @@ export async function POST(request: NextRequest) {
         message: 'Order already processed'
       })
     }
-    
+
+    // If no packId in metadata, try to find product by payment link ID
+    if (!packId && stripeSession.payment_link) {
+      console.log('No packId in metadata, looking up by payment link:', stripeSession.payment_link)
+
+      const product = await prisma.product.findFirst({
+        where: { stripePaymentLinkId: stripeSession.payment_link as string },
+        include: { packs: { orderBy: { order: 'asc' } } }
+      })
+
+      if (product && product.packs.length > 0) {
+        packId = product.packs[0].id
+        console.log('Found pack via payment link:', packId)
+      }
+    }
+
     if (!packId) {
       return NextResponse.json(
         { error: 'Invalid session metadata - no pack ID found' },

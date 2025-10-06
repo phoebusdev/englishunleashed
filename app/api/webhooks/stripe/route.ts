@@ -57,8 +57,23 @@ export async function POST(req: Request) {
           packId = packIds[0]
         }
 
+        // If no packId in metadata, try to find product by payment link ID
+        if (!packId && session.payment_link) {
+          console.log('[Webhook] No packId in metadata, looking up by payment link:', session.payment_link)
+
+          const product = await prisma.product.findFirst({
+            where: { stripePaymentLinkId: session.payment_link as string },
+            include: { packs: { orderBy: { order: 'asc' } } }
+          })
+
+          if (product && product.packs.length > 0) {
+            packId = product.packs[0].id
+            console.log('[Webhook] Found pack via payment link:', packId)
+          }
+        }
+
         if (!packId) {
-          console.error('No packId in session metadata')
+          console.error('[Webhook] No packId in session metadata or payment link')
           return NextResponse.json({ error: 'Missing packId' }, { status: 400 })
         }
 
