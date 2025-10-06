@@ -93,10 +93,10 @@ export async function POST(req: Request) {
             stripeId: session.id,
             // Set download expiry for 24 hours if guest
             downloadExpiry: user.password ? null : new Date(Date.now() + 24 * 60 * 60 * 1000),
-            metadata: {
+            metadata: JSON.stringify({
               customerEmail: session.customer_email,
               paymentLinkId: session.metadata?.paymentLinkId,
-            }
+            })
           }
         })
 

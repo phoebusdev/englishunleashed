@@ -63,11 +63,10 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next()
 }
 
-// Temporarily disable middleware to debug
 export const config = {
   matcher: [
-    // '/admin/:path*',
-    // '/account/:path*',
-    // '/quiz/:path*',
+    '/admin/:path*',
+    '/account/:path*',
+    '/quiz/:path*',
   ],
 }

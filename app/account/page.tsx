@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
+import { DownloadButton } from '@/components/DownloadButton'
 
 export default async function AccountPage() {
   const session = await getServerSession(authOptions)
@@ -88,19 +89,18 @@ export default async function AccountPage() {
                           {order.status === 'COMPLETED' && order.product.packs.length > 0 && (
                             <div className="mt-2 space-y-1">
                               {order.product.packs.map((pack) => (
-                                <div key={pack.id}>
+                                <div key={pack.id} className="flex items-center gap-3">
                                   {pack.hasPdf && (
-                                    <a
-                                      href={`/api/download/${order.id}?packId=${pack.id}`}
-                                      className="text-sm text-purple-600 hover:text-purple-700"
-                                    >
-                                      Download PDF
-                                    </a>
+                                    <DownloadButton
+                                      orderId={order.id}
+                                      packId={pack.id}
+                                      packTitle={pack.title}
+                                    />
                                   )}
                                   {pack.hasQuiz && (
                                     <Link
                                       href={`/quiz/${pack.id}`}
-                                      className="text-sm text-purple-600 hover:text-purple-700 ml-3"
+                                      className="text-sm text-purple-600 hover:text-purple-700"
                                     >
                                       Take Quiz
                                     </Link>

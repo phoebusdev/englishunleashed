@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { z } from 'zod'
 import { authOptions } from 'lib/auth'
 import { hashPassword, verifyPassword } from 'lib/password'
-import { prisma } from 'lib/prisma'
+import { prisma } from 'lib/db'
 
 const updateProfileSchema = z.object({
   name: z.string().min(1).max(100),

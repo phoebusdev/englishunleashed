@@ -12,6 +12,11 @@ export function Navigation() {
 
   const isActive = (path: string) => pathname === path
 
+  // Hide navigation on admin pages (admin has its own navigation)
+  if (pathname?.startsWith('/admin')) {
+    return null
+  }
+
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -84,7 +84,7 @@ export function LoginForm() {
       </div>
 
       <div className="flex items-center justify-between">
-        <a href="/auth/forgot-password" className="text-sm text-purple-600 hover:text-purple-500">
+        <a href="/forgot-password" className="text-sm text-purple-600 hover:text-purple-500">
           Forgot your password?
         </a>
       </div>
