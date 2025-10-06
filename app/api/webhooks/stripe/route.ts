@@ -58,8 +58,9 @@ export async function POST(req: Request) {
           customer_email: session.customer_email
         })
 
-        // Get pack ID from metadata (handle both packId and packIds for backwards compatibility)
-        let packId = session.metadata?.packId
+        // Get pack ID from metadata - handle both singular packId and plural packIds
+        let packId = session.metadata?.packId // Try singular first
+
         if (!packId && session.metadata?.packIds) {
           // Handle comma-separated packIds (use first pack)
           const packIds = session.metadata.packIds.split(',')

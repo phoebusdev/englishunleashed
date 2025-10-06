@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     // Retrieve the Stripe session
     const stripeSession = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['line_items', 'payment_link']
+      expand: ['line_items', 'payment_link', 'customer_details']
     })
 
     // Debug logging
@@ -32,7 +32,8 @@ export async function POST(request: NextRequest) {
       payment_status: stripeSession.payment_status,
       payment_link: stripeSession.payment_link,
       metadata: stripeSession.metadata,
-      customer_email: stripeSession.customer_email
+      customer_email: stripeSession.customer_email,
+      customer_details: stripeSession.customer_details
     })
 
     if (stripeSession.payment_status !== 'paid') {
@@ -42,9 +43,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get pack IDs from metadata - handle both single packId and multiple packIds
-    const packIds = stripeSession.metadata?.packIds?.split(',') || []
-    let packId = packIds[0] // Use first pack as primary
+    // Get pack ID from metadata - handle both singular packId and plural packIds
+    let packId = stripeSession.metadata?.packId // Try singular first
+
+    if (!packId && stripeSession.metadata?.packIds) {
+      // Handle comma-separated packIds (use first pack)
+      const packIds = stripeSession.metadata.packIds.split(',')
+      packId = packIds[0]
+    }
 
     // Check if order already exists (to prevent duplicate processing)
     const existingOrder = await prisma.order.findFirst({
