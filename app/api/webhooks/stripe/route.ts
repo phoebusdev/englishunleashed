@@ -19,13 +19,22 @@ export async function POST(req: Request) {
     )
   }
 
+  // Check if webhook secret is configured
+  if (!env.STRIPE_WEBHOOK_SECRET) {
+    console.error('STRIPE_WEBHOOK_SECRET is not configured')
+    return NextResponse.json(
+      { error: 'Webhook secret not configured' },
+      { status: 503 }
+    )
+  }
+
   let event: Stripe.Event
 
   try {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      env.STRIPE_WEBHOOK_SECRET!
+      env.STRIPE_WEBHOOK_SECRET
     )
   } catch (err) {
     console.error('Webhook signature verification failed:', err)
@@ -39,9 +48,15 @@ export async function POST(req: Request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
-        
-        // Get pack ID from metadata
-        const packId = session.metadata?.packId
+
+        // Get pack ID from metadata (handle both packId and packIds for backwards compatibility)
+        let packId = session.metadata?.packId
+        if (!packId && session.metadata?.packIds) {
+          // Handle comma-separated packIds (use first pack)
+          const packIds = session.metadata.packIds.split(',')
+          packId = packIds[0]
+        }
+
         if (!packId) {
           console.error('No packId in session metadata')
           return NextResponse.json({ error: 'Missing packId' }, { status: 400 })

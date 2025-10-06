@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
         originalPrice: product.price.toString(),
         discountAmount: discountAmount.toString(),
         promoCode: promoCode || '',
-        packIds: product.packs.map(p => p.id).join(','),
+        packId: product.packs[0]?.id || '', // Use first pack for compatibility with webhook
       },
       allow_promotion_codes: false,
       billing_address_collection: 'auto',
