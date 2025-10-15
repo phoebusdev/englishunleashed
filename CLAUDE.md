@@ -20,6 +20,28 @@ datasource db {
 
 English Unleashed - Next.js e-commerce platform for educational content with YouTube integration, Stripe payment processing, and a comprehensive quiz system. Built on Next.js Enterprise Boilerplate foundation.
 
+### Quick Reference - Most Common Tasks
+
+```bash
+# Start Development
+pnpm install && pnpm db:push && pnpm seed:admin && pnpm dev
+
+# Pre-Commit Validation (run these before every commit)
+pnpm typecheck && pnpm lint && pnpm build
+
+# Database Operations
+pnpm db:studio                    # Visual database editor
+pnpm db:push                      # Push schema changes (dev)
+pnpm prisma generate              # Regenerate Prisma client
+
+# Testing
+pnpm test                         # Unit tests
+pnpm e2e:ui                       # E2E tests with UI
+
+# Deployment
+pnpm build:vercel                 # Production build with migrations
+```
+
 ## Core Development Commands
 
 ### Initial Setup
@@ -60,7 +82,16 @@ pnpm prisma generate              # Regenerate Prisma client (after schema chang
 pnpm youtube:sync                 # Manual sync (uses YouTube API)
 pnpm youtube:rss-sync             # RSS feed sync (no API quota)
 pnpm youtube:import-history       # Import all historical videos
+pnpm youtube:import-api           # Import via YouTube API
+pnpm youtube:sync-history         # Sync historical video data
 pnpm sync:videos                  # Initial video import from channel
+pnpm youtube:webhook:setup        # Setup YouTube webhook notifications
+pnpm youtube:webhook:unsubscribe  # Unsubscribe from YouTube webhooks
+```
+
+### Stripe & Payment Management
+```bash
+node check-payment-links.js       # Verify Stripe Payment Links configuration
 ```
 
 ### Development Tools
@@ -68,7 +99,18 @@ pnpm sync:videos                  # Initial video import from channel
 pnpm storybook                    # Component development at http://localhost:6006
 pnpm analyze                      # Bundle size analysis
 pnpm coupling-graph               # Generate dependency graph (outputs graph.svg)
+pnpm format                       # Format all code with Prettier
 ```
+
+### MCP Server Integration (Available)
+
+The following Model Context Protocol (MCP) servers are available in the workspace:
+
+- **Stripe MCP**: Payment operations (customers, products, prices, invoices, subscriptions)
+- **Vercel MCP**: Deployment operations (projects, deployments, domains)
+- **Hugging Face MCP**: ML/AI resources (models, datasets, papers, spaces)
+
+These can be leveraged through Claude Code for enhanced integration capabilities.
 
 ## Architecture & Key Patterns
 
@@ -85,35 +127,79 @@ pnpm coupling-graph               # Generate dependency graph (outputs graph.svg
 ### Critical File Structure
 ```
 /app                              # Next.js App Router
-  /(public)                      # Public pages (no auth)
-    /shop, /videos, /checkout    
+  /(public)                      # Public pages (no auth required)
+    /page.tsx                    # Homepage
+    /shop                        # Product listing
+    /videos                      # Video gallery
+    /checkout                    # Checkout flow
   /account                       # User dashboard (auth required)
-    /quizzes, /orders            
-  /admin                         # Admin panel (admin auth)
-    /quiz-builder, /packs        
+    /page.tsx                    # Account overview
+    /quizzes                     # Quiz history
+    /orders                      # Order history
+  /admin                         # Admin panel (admin auth required)
+    /page.tsx                    # Admin dashboard
+    /quiz-builder                # Quiz creation tool
+    /packs                       # Pack management
+    /users                       # User management
+    /orders                      # Order management
+    /analytics                   # Analytics dashboard
   /api                           # API routes
     /admin/*                     # Admin endpoints (protected)
-    /auth/[...nextauth]         # Auth handlers
-    /webhooks/stripe             # Payment webhooks
+    /auth                        # Authentication endpoints
+      /[...nextauth]            # NextAuth handlers
+      /signup, /login, etc.     # Auth flows
+    /webhooks                    # External service webhooks
+      /stripe                   # Stripe payment events
+      /youtube                  # YouTube notifications
     /cron/*                      # Scheduled jobs
+      /email-queue              # Email processing
+      /sync-youtube*            # Video sync jobs
+    /checkout                    # Checkout & payment APIs
+    /quiz                        # Quiz submission & access
+    /download                    # File download endpoints
 
 /lib                             # Core utilities (AI-optimized)
   /errors                        # Centralized error handling
+    index.ts                     # Error classes & handlers
   /validation                    # Zod schemas for all models
+    index.ts                     # Validation utilities
   /dev-utils                     # Development helpers
-  /api/response.ts               # Standardized API responses
+    index.ts                     # Logging, timers, assertions
+  /api                           # API utilities
+    response.ts                  # Standardized API responses
+  /admin                         # Admin-specific utilities
+    auth.ts                      # Admin auth helpers
+    constants.ts                 # Admin constants
+  /component-templates           # Reusable templates
+    api-route-template.ts        # API route boilerplate
   auth.ts                        # NextAuth configuration
   db.ts                          # Prisma client singleton
-  stripe.ts                      # Stripe initialization
-  youtube.ts                     # YouTube API client
+  stripe.ts, stripe-server.ts, stripe-client.ts  # Stripe integration
+  youtube.ts, youtube-rss.ts, youtube-sync.ts    # YouTube integration
+  email.ts, email-templates.ts  # Email functionality
+  jwt.ts                         # JWT token utilities
+  password.ts                    # Password hashing
+  rate-limit.ts                  # Rate limiting
+  csrf.ts                        # CSRF protection
 
 /components                      # Reusable UI components
-  /ui                           # Base components (Button, Card, etc.)
+  /ui                           # Base Radix UI components
+    Button, Card, Input, etc.   # Styled with CVA variants
   /quiz                         # Quiz-specific components
   /shop                         # E-commerce components
 
 /prisma
-  schema.prisma                  # Database schema
+  schema.prisma                  # Database schema (PostgreSQL)
+  schema-analytics.prisma        # Analytics schema (if separated)
+  schema.production.prisma       # Production-specific schema
+
+/scripts                         # Utility scripts (see Helper Scripts section)
+  *.ts, *.sh                     # Setup, sync, and build scripts
+
+/e2e                             # Playwright E2E tests
+/stories                         # Storybook stories
+
+middleware.ts                    # Next.js middleware (auth protection)
 ```
 
 ### AI-Friendly Refactoring Features
@@ -319,6 +405,34 @@ export async function POST(request: Request) {
 - **Environment Variables**: Validated with T3 Env (see `env.ts`)
 - **Webhook Verification**: Stripe signature validation on all webhook events
 
+## Helper Scripts & Utilities
+
+The project includes several utility scripts in the `/scripts` directory:
+
+### Database & Setup Scripts
+- `seed-admin.ts` - Creates default admin user (admin@example.com / password123)
+- `setup-local.ts` - Local environment setup
+- `setup-local-db.sh` - Database initialization script
+- `test-db-connection.ts` - Verify database connectivity
+- `verify-database.ts` - Validate database schema
+- `create-test-products.ts` - Generate test product data
+
+### YouTube Integration Scripts
+- `sync-initial-videos.ts` - Initial video import from channel
+- `manual-youtube-sync.ts` - Manual trigger for YouTube sync
+- `sync-youtube-rss.ts` - RSS-based sync (no API quota usage)
+- `sync-youtube-history.ts` - Sync historical video data
+- `import-full-youtube-history.ts` - Complete historical import
+- `import-youtube-via-api.ts` - API-based import
+- `fetch-all-videos.ts` - Fetch all videos from channel
+- `setup-youtube-webhook.ts` - Configure YouTube push notifications
+
+### Build & Production Scripts
+- `build-production.sh` - Production build with migrations (used by `pnpm build:vercel`)
+
+### Authentication Testing
+- `test-auth.ts` - Verify authentication setup
+
 ## Critical Development Patterns
 
 ### Adding New API Routes
@@ -419,9 +533,13 @@ assert(order.userId === session.user.id, 'Not authorized', AuthorizationError)
 2. **Environment Variables**: Set all variables from `.env.example`
 3. **Build Command**: `pnpm build:vercel` (runs migrations + build)
 4. **Webhooks**: Configure Stripe webhook URL in dashboard
-5. **Cron Jobs**: Configure in `vercel.json` for email queue, YouTube sync
+5. **Cron Jobs**: Can be configured in `vercel.json` for email queue, YouTube sync (currently empty)
 
-See `docs/VERCEL_DEPLOYMENT.md` for detailed steps.
+See the following documentation for detailed steps:
+- `docs/VERCEL_DEPLOYMENT.md` - Comprehensive deployment guide
+- `docs/DATABASE-CONFIGURATION.md` - Database setup instructions
+- `STRIPE-SETUP.md` - Stripe payment configuration
+- `WEBHOOK-SETUP.md` - Webhook configuration guide
 
 ### Build Process
 
