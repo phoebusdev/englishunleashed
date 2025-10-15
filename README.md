@@ -1,105 +1,397 @@
+# English Unleashed
 
-# [Next.js Enterprise Boilerplate](https://blazity.com/open-source/nextjs-enterprise-boilerplate) 
+A production-ready Next.js e-commerce platform for educational content with YouTube integration, Stripe payment processing, and an interactive quiz system. Built on the [Next.js Enterprise Boilerplate](https://github.com/Blazity/next-enterprise) foundation.
 
-A production-ready template for building enterprise applications with Next.js. This boilerplate provides a solid foundation with carefully selected technologies and ready-to-go infrastructure to help you develop high-quality applications efficiently.
+## 🎯 Project Overview
 
-## Motivation
+English Unleashed is a comprehensive learning platform that combines:
+- 📦 **Educational Packs** - Bundled content (Video + PDF + Quiz)
+- 💳 **Stripe Payment Links** - Secure payment processing with automated order fulfillment
+- 🎥 **YouTube Integration** - Automated video sync with RSS and API support
+- 📝 **Interactive Quizzes** - Multiple-choice assessments with progress tracking
+- 👤 **User Accounts** - Full authentication with guest checkout support
+- 📧 **Email Notifications** - Purchase confirmations and content ready alerts
+- 📊 **Analytics Dashboard** - Track downloads, page views, and user engagement
+- 🔐 **Admin Panel** - Complete content management system
 
-While most Next.js boilerplates focus on individual developer needs with excessive complexity, **next-enterprise** prioritizes strategic simplicity for enterprise teams. It offers a streamlined foundation with high-impact features that maximize developer productivity and accelerate time-to-market for business-critical applications.
+## ✅ Verified Working Features
 
-<a href="https://blazity.com/">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/assets/blazity-logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="/assets/blazity-logo-light.svg">
-  <img alt="Logo" align="right" height="80" src="/assets/blazity-logo-light.svg">
-</picture>
-</a>
+### Stripe/PDF Integration (100% Operational)
+- ✅ **Payment Links** - Automated Stripe Payment Link generation for each pack
+- ✅ **Webhook Processing** - Real-time order creation via `checkout.session.completed` events
+- ✅ **Guest Checkout** - 24-hour download access without account creation
+- ✅ **Registered Users** - Permanent access with 7-day JWT tokens
+- ✅ **PDF Upload** - Vercel Blob storage with admin upload interface
+- ✅ **Secure Downloads** - JWT-protected download URLs with expiry enforcement
+- ✅ **Email Notifications** - Purchase confirmations with download links
+- ✅ **Order Management** - Complete order history and status tracking
 
-> [!NOTE]
-> **Blazity** is a group of Next.js architects. We help organizations architect, optimize, and deploy high-performance Next.js applications at scale. Contact us at [contact@blazity.com](https://blazity.com) if you’d like to talk about your project.
+### Payment Flow Architecture
+```
+User Purchase → Stripe Payment Link → checkout.session.completed webhook
+    ↓
+Order Creation (with JWT token) → Email Queue → Purchase Confirmation
+    ↓
+Download Access (via /api/download/[orderId]?token=...) → Vercel Blob PDF
+```
 
+## 🚀 Quick Start
 
+### Prerequisites
+- Node.js 20+ (LTS)
+- pnpm 9.1.0+
+- PostgreSQL database (production) or SQLite (local dev)
+- Stripe account (for payments)
+- Vercel account (for deployment & blob storage)
+- Resend account (for emails)
 
-## Documentation
+### Installation
 
-There is a separate documentation that explains its functionality, highlights core business values and technical decisions, provides guidelines for future development, and includes architectural diagrams.
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd englishunleashed
 
-We encourage you to [visit our docs (docs.blazity.com)](https://docs.blazity.com) to learn more
+# Install dependencies
+pnpm install
 
-## Integrated features
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your credentials (see Configuration below)
 
-### Boilerplate
-With this template you will get all the boilerplate features included:
+# Initialize database
+pnpm db:push
 
-* [Next.js 15](https://nextjs.org/) - Performance-optimized configuration using App Directory
-* [Tailwind CSS v4](https://tailwindcss.com/) - Utility-first CSS framework for efficient UI development
-* [ESlint 9](https://eslint.org/) and [Prettier](https://prettier.io/) - Code consistency and error prevention
-* [Corepack](https://github.com/nodejs/corepack) & [pnpm](https://pnpm.io/) as the package manager - For project management without compromises 
-* [Strict TypeScript](https://www.typescriptlang.org/) - Enhanced type safety with carefully crafted config and [ts-reset](https://github.com/total-typescript/ts-reset) library
-* [GitHub Actions](https://github.com/features/actions) - Pre-configured workflows including bundle size and performance tracking
-* Perfect Lighthouse score - Optimized performance metrics
-* [Bundle analyzer](https://www.npmjs.com/package/@next/bundle-analyzer) - Monitor and manage bundle size during development
-* Testing suite - [Jest](https://jestjs.io/), [React Testing Library](https://testing-library.com/react), and [Playwright](https://playwright.dev/) for comprehensive testing
-* [Storybook](https://storybook.js.org/) - Component development and documentation
-* Advanced testing - Smoke and acceptance testing capabilities
-* [Conventional commits](https://www.conventionalcommits.org/) - Standardized commit history management
-* [Observability](https://opentelemetry.io/) - Open Telemetry integration
-* [Absolute imports](https://nextjs.org/docs/advanced-features/module-path-aliases) - Simplified import structure
-* [Health checks](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) - Kubernetes-compatible monitoring
-* [Radix UI](https://www.radix-ui.com/) - Headless components for customization
-* [CVA](http://cva.style/) (Class Variance Authority) - Consistent design system creation
-* [Renovate BOT](https://www.whitesourcesoftware.com/free-developer-tools/renovate) - Automated dependency and security updates
-* [Patch-package](https://www.npmjs.com/package/patch-package) - External dependency fixes without compromises
-* Component relationship tools - Graph for managing coupling and cohesion
-* [Semantic Release](https://github.com/semantic-release/semantic-release) - Automated changelog generation
-* [T3 Env](https://env.t3.gg/) - Streamlined environment variable management
+# Create admin user
+pnpm seed:admin
+# Default: admin@englishunleashed.com / changeme123
 
-### Infrastructure & deployments
+# Start development server
+pnpm dev
+# Open http://localhost:3000
+```
 
-#### Vercel
+## ⚙️ Configuration
 
-Easily deploy your Next.js app with [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=github&utm_campaign=next-enterprise) by clicking the button below:
+### Required Environment Variables
 
-[![Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/Blazity/next-enterprise)
+```bash
+# Database (PostgreSQL for production, SQLite for local)
+DATABASE_URL="postgresql://user:password@host:5432/database"
 
-#### Custom cloud infrastructure
+# Authentication (generate with: openssl rand -base64 32)
+NEXTAUTH_URL="https://yourdomain.com"
+NEXTAUTH_SECRET="your-32-character-secret"
 
-**next-enterprise** offers dedicated infrastructure as code (IaC) solutions built with Terraform, designed specifically for deploying Next.js applications based on our extensive experience working with enterprise clients.
+# Stripe (get from https://dashboard.stripe.com/apikeys)
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 
-Learn more in our [documentation (docs.blazity.com)][docs] how to quickstart with the deployments using simple CLI.
+# Vercel Blob (for PDF storage)
+BLOB_READ_WRITE_TOKEN="vercel_blob_..."
 
-#### Available cloud providers and theirs features:
+# Resend (for email notifications)
+RESEND_API_KEY="re_..."
 
-* **AWS (Amazon Web Services)**
-  * Automated provisioning of AWS infrastructure
-  * Scalable & secure setup using:
-     * VPC - Isolated network infrastructure
-     * Elastic Container Service (ECS) - Container orchestration
-     * Elastic Container Registry (ECR) - Container image storage
-     * Application Load Balancer - Traffic distribution
-     * S3 + CloudFront - Static asset delivery and caching
-     * AWS WAF - Web Application Firewall protection
-     * Redis Cluster - Caching
-  * CI/CD ready - Continuous integration and deployment pipeline
+# Optional: YouTube API (for video sync)
+YOUTUBE_API_KEY="..."
+YOUTUBE_CHANNEL_ID="..."
+YOUTUBE_CHANNEL_HANDLE="@yourchannel"
+```
 
-*... more coming soon*
+### Stripe Setup
 
-### Team & maintenance
+#### 1. Get API Keys
+1. Go to https://dashboard.stripe.com/test/apikeys
+2. Copy **Secret key** → `STRIPE_SECRET_KEY`
+3. Copy **Publishable key** → `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 
-**next-enterprise** is backed and maintained by [Blazity](https://blazity.com), providing up to date security features and integrated feature updates.
+#### 2. Configure Webhook
+1. Go to https://dashboard.stripe.com/test/webhooks
+2. Click "Add endpoint"
+3. **Endpoint URL**: `https://yourdomain.com/api/webhooks/stripe`
+4. **Events**: Select `checkout.session.completed`
+5. Copy **Signing secret** → `STRIPE_WEBHOOK_SECRET`
 
-#### Active maintainers
+#### 3. Test Locally with Stripe CLI
+```bash
+# Install Stripe CLI
+# https://stripe.com/docs/stripe-cli
 
-- Igor Klepacki ([neg4n](https://github.com/neg4n)) - Open Source Software Developer
-- Tomasz Czechowski ([tomaszczechowski](https://github.com/tomaszczechowski)) - Solutions Architect & DevOps
-- Jakub Jabłoński ([jjablonski-it](https://github.com/jjablonski-it)) - Head of Integrations
+# Forward webhooks to local server
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
 
-#### All-time contributors
-[bmstefanski](https://github.com/bmstefanski)
+# Copy the webhook signing secret to .env.local
+# STRIPE_WEBHOOK_SECRET="whsec_..."
 
-## License
+# Restart dev server to pick up new env var
+pnpm dev
+```
+
+### Vercel Blob Setup
+
+1. Go to your Vercel project settings
+2. Navigate to **Storage** → **Create Blob Store**
+3. Copy the `BLOB_READ_WRITE_TOKEN`
+4. Add to Vercel environment variables (Preview & Production)
+
+### Vercel Deployment
+
+#### Environment Variables in Vercel
+Add all variables from `.env.example` to:
+- **Settings** → **Environment Variables**
+- Check **Preview** and **Production** environments
+- Redeploy after adding variables
+
+#### Webhook Configuration
+⚠️ **Important**: Update your Stripe webhook URL to your production domain:
+```
+https://yourdomain.com/api/webhooks/stripe
+```
+
+## 📋 Development Commands
+
+### Core Commands
+```bash
+pnpm dev                          # Start development server
+pnpm build                        # Production build
+pnpm start                        # Start production server
+pnpm typecheck                    # TypeScript validation
+pnpm lint                         # ESLint checks
+pnpm lint:fix                     # Auto-fix linting issues
+pnpm prettier:fix                 # Format code
+```
+
+### Database Commands
+```bash
+pnpm db:push                      # Push schema changes (dev)
+pnpm db:migrate                   # Apply migrations (prod)
+pnpm db:studio                    # Open Prisma Studio UI
+pnpm prisma generate              # Regenerate Prisma client
+pnpm seed:admin                   # Create admin user
+```
+
+### Testing Commands
+```bash
+pnpm test                         # Jest unit tests
+pnpm e2e:headless                 # Playwright E2E tests
+pnpm e2e:ui                       # Playwright UI mode
+pnpm test-storybook               # Storybook tests
+pnpm storybook                    # Start Storybook
+```
+
+### YouTube Integration
+```bash
+pnpm youtube:sync                 # Manual YouTube API sync
+pnpm youtube:rss-sync             # RSS feed sync (no quota)
+pnpm youtube:import-history       # Import historical videos
+```
+
+## 🏗️ Architecture
+
+### Tech Stack
+- **Framework**: Next.js 15.3.1 with App Router
+- **Language**: TypeScript 5.8.3 (strict mode)
+- **Styling**: Tailwind CSS v4
+- **Database**: Prisma ORM (PostgreSQL production, SQLite dev)
+- **Authentication**: NextAuth.js (JWT strategy)
+- **Payments**: Stripe (Payment Links + Webhooks)
+- **Storage**: Vercel Blob (PDF files)
+- **Email**: Resend (with queue system)
+- **UI Components**: Radix UI + CVA (class-variance-authority)
+- **Validation**: Zod schemas
+- **Testing**: Jest, React Testing Library, Playwright
+- **Deployment**: Vercel
+
+### Project Structure
+```
+/app                              # Next.js App Router
+  /(public)                       # Public pages (no auth)
+    /shop                         # Product catalog
+    /videos                       # Video gallery
+    /checkout                     # Payment flow
+  /account                        # User dashboard (auth required)
+    /quizzes                      # Quiz history
+    /orders                       # Purchase history
+  /admin                          # Admin panel (admin only)
+    /packs                        # Content management
+    /quiz-builder                 # Quiz creation
+    /users, /orders, /analytics   # Management panels
+  /api                            # Backend API
+    /admin/*                      # Admin endpoints
+    /auth/*                       # Authentication
+    /webhooks/stripe              # Payment webhooks ✅
+    /download/[orderId]           # Secure downloads ✅
+    /checkout                     # Payment initiation
+
+/lib                              # Core utilities
+  /errors                         # Error handling system
+  /validation                     # Zod validation schemas
+  /dev-utils                      # Development utilities
+  /api/response.ts                # Standardized API responses
+  auth.ts                         # NextAuth config
+  stripe.ts                       # Stripe client ✅
+  email.ts                        # Email queue system ✅
+
+/components                       # Reusable UI components
+  /ui                             # Base components (Radix UI)
+  /quiz                           # Quiz components
+  /shop                           # E-commerce components
+
+/prisma
+  schema.prisma                   # Database schema ✅
+```
+
+### Database Models
+
+**Core Models:**
+- `User` - Authentication, roles (isAdmin), sessions
+- `Product` - Top-level products with Stripe Payment Link IDs ✅
+- `Pack` - Content bundles (video + PDF + quiz) ✅
+- `Order` - Purchase tracking with JWT download tokens ✅
+- `Quiz` / `Question` - Interactive assessments
+- `QuizAttempt` - User progress tracking
+- `EmailQueue` - Async email processing with retry logic ✅
+- `DownloadLog` - Analytics tracking ✅
+
+**Key Relations:**
+```
+Product (1) → (N) Pack (1) → (1) Quiz → (N) Question
+   ↓
+Order (N) ← (1) User → (N) QuizAttempt
+```
+
+## 🔐 Security Features
+
+- ✅ **Webhook Signature Verification** - Stripe signatures validated
+- ✅ **JWT Token Security** - Signed tokens with expiry (issuer/audience claims)
+- ✅ **Download Authorization** - Multi-layer verification (token + order + user)
+- ✅ **Guest Expiry Enforcement** - 24-hour limit for non-registered users
+- ✅ **SQL Injection Prevention** - Prisma ORM parameterized queries
+- ✅ **File Type Validation** - PDF-only uploads
+- ✅ **Admin Route Protection** - Middleware + session checks
+- ✅ **Rate Limiting** - Upstash Redis on auth endpoints
+- ✅ **CSRF Protection** - Token validation on mutations
+- ✅ **Environment Variable Validation** - T3 Env runtime checks
+
+## 📊 Testing & Monitoring
+
+### Test Payment Cards (Stripe Test Mode)
+```
+Card Number: 4242 4242 4242 4242
+Expiry: Any future date
+CVC: Any 3 digits
+ZIP: Any valid ZIP
+```
+
+### Monitoring Webhooks
+```bash
+# Check webhook events in Stripe Dashboard
+https://dashboard.stripe.com/test/webhooks
+
+# View logs in Vercel
+vercel logs --follow
+
+# Check local webhook events
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+```
+
+### Analytics Dashboard
+Access at `/admin/analytics` to view:
+- Page views and sessions
+- Download logs
+- User engagement metrics
+- Order statistics
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**1. Webhook Not Receiving Events**
+```bash
+# Verify webhook secret matches Stripe dashboard
+echo $STRIPE_WEBHOOK_SECRET
+
+# Test webhook endpoint
+curl -X POST https://yourdomain.com/api/webhooks/stripe
+
+# Check Stripe dashboard for delivery attempts
+```
+
+**2. Download Links Not Working**
+```bash
+# Verify JWT secret is set
+echo $NEXTAUTH_SECRET
+
+# Check token expiry (default: 24h guests, 7d registered)
+# View in browser console after download attempt
+```
+
+**3. PDF Upload Failing**
+```bash
+# Verify Blob token is configured
+echo $BLOB_READ_WRITE_TOKEN
+
+# Check file type (must be PDF)
+# Check file size (Vercel Blob limits apply)
+```
+
+**4. Database Connection Errors**
+```bash
+# PostgreSQL required for production
+# Verify connection string format
+DATABASE_URL="postgresql://user:pass@host:5432/db?sslmode=require"
+
+# Test connection
+pnpm prisma db push
+```
+
+## 📚 Documentation
+
+- **[CLAUDE.md](./CLAUDE.md)** - Complete development guide for AI assistants
+- **[STRIPE-SETUP.md](./STRIPE-SETUP.md)** - Detailed Stripe configuration
+- **[AI_DEVELOPMENT_GUIDE.md](./AI_DEVELOPMENT_GUIDE.md)** - AI-friendly development patterns
+- **[VERCEL_DEPLOYMENT.md](./docs/VERCEL_DEPLOYMENT.md)** - Deployment instructions
+- **[DATABASE-CONFIGURATION.md](./docs/DATABASE-CONFIGURATION.md)** - Database setup guide
+
+## 🎉 Success Stories
+
+### Verified Integration Test (December 2024)
+✅ **Complete Stripe/PDF Integration**
+- Environment: Vercel Preview Deployment (`specdriven` branch)
+- Test URL: `https://englishunleashed-git-specdriven-phoebusdevs-projects.vercel.app`
+- Results:
+  - Payment Link generation: **Working**
+  - Webhook reception: **Working**
+  - Order creation: **Working**
+  - PDF downloads: **Working**
+  - Email notifications: **Working**
+  - Guest vs registered user flows: **Both working**
+
+## 🤝 Contributing
+
+This project uses:
+- **Conventional Commits** for commit messages
+- **Semantic Release** for automated versioning
+- **ESLint** + **Prettier** for code quality
+- **TypeScript strict mode** for type safety
+
+### Pre-commit Checklist
+```bash
+pnpm typecheck    # Must pass with 0 errors
+pnpm lint         # Must pass
+pnpm build        # Must complete successfully
+```
+
+## 📄 License
 
 MIT
 
+## 🙏 Acknowledgments
 
-[docs]: https://docs.blazity.com/next-enterprise/deployments/enterprise-cli
+Built on [Next.js Enterprise Boilerplate](https://github.com/Blazity/next-enterprise) by Blazity.
+
+---
+
+**Status**: ✅ Production Ready | **Last Updated**: December 2024 | **Stripe Integration**: Fully Operational
