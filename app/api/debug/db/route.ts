@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
 export async function GET() {
+  // Disable in production for security
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Debug endpoints not available in production' },
+      { status: 404 }
+    )
+  }
+
   try {
     // Test database connection
     await prisma.$connect()

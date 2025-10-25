@@ -48,7 +48,7 @@ pnpm build:vercel                 # Production build with migrations
 ```bash
 pnpm install                      # Install dependencies
 pnpm db:push                      # Push schema to database
-pnpm seed:admin                   # Create admin user (admin@example.com / password123)
+pnpm seed:admin                   # Create admin user (admin@englishunleashed.com / changeme123)
 pnpm dev                          # Start dev server at http://localhost:3000
 ```
 
@@ -410,7 +410,7 @@ export async function POST(request: Request) {
 The project includes several utility scripts in the `/scripts` directory:
 
 ### Database & Setup Scripts
-- `seed-admin.ts` - Creates default admin user (admin@example.com / password123)
+- `seed-admin.ts` - Creates default admin user (admin@englishunleashed.com / changeme123)
 - `setup-local.ts` - Local environment setup
 - `setup-local-db.sh` - Database initialization script
 - `test-db-connection.ts` - Verify database connectivity

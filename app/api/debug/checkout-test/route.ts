@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 
 export async function GET() {
+  // Disable in production for security
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Debug endpoints not available in production' },
+      { status: 404 }
+    )
+  }
+
   console.log('=== Checkout Test Debug ===')
   console.log('Stripe object exists:', !!stripe)
   console.log('Stripe is null:', stripe === null)
