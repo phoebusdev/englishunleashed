@@ -49,15 +49,31 @@ export function NavigationWithAuth() {
             {/* Conditional navigation based on auth state */}
             {session ? (
               <>
-                <Link href="/dashboard" className="text-gray-700 hover:text-primary font-medium transition-colors">
-                  Dashboard
-                </Link>
-                <Link href="/account" className="text-gray-700 hover:text-primary font-medium transition-colors">
-                  My Materials
-                </Link>
-                <Link href="/videos" className="text-gray-700 hover:text-primary font-medium transition-colors">
-                  Videos
-                </Link>
+                {session.user?.isAdmin ? (
+                  <>
+                    <Link href="/admin" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                      Admin Dashboard
+                    </Link>
+                    <Link href="/account" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                      My Materials
+                    </Link>
+                    <Link href="/videos" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                      Videos
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/dashboard" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                      Dashboard
+                    </Link>
+                    <Link href="/account" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                      My Materials
+                    </Link>
+                    <Link href="/videos" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                      Videos
+                    </Link>
+                  </>
+                )}
               </>
             ) : (
               <>
@@ -93,6 +109,17 @@ export function NavigationWithAuth() {
                       <p className="text-xs text-gray-500">{session.user?.email}</p>
                     </div>
 
+                    {session.user?.isAdmin && (
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                        Learning Dashboard
+                      </Link>
+                    )}
+
                     <Link
                       href="/account"
                       className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -110,20 +137,6 @@ export function NavigationWithAuth() {
                       <ShoppingBag className="w-4 h-4" />
                       Browse Shop
                     </Link>
-
-                    {session.user?.isAdmin && (
-                      <>
-                        <hr className="my-2" />
-                        <Link
-                          href="/admin"
-                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          <LayoutDashboard className="w-4 h-4" />
-                          Admin Dashboard
-                        </Link>
-                      </>
-                    )}
 
                     <hr className="my-2" />
                     <button
@@ -174,27 +187,55 @@ export function NavigationWithAuth() {
               {/* Conditional mobile navigation based on auth state */}
               {session ? (
                 <>
-                  <Link
-                    href="/dashboard"
-                    className="text-gray-700 hover:text-primary font-medium transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/account"
-                    className="text-gray-700 hover:text-primary font-medium transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    My Materials
-                  </Link>
-                  <Link
-                    href="/videos"
-                    className="text-gray-700 hover:text-primary font-medium transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Videos
-                  </Link>
+                  {session.user?.isAdmin ? (
+                    <>
+                      <Link
+                        href="/admin"
+                        className="text-gray-700 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Admin Dashboard
+                      </Link>
+                      <Link
+                        href="/account"
+                        className="text-gray-700 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        My Materials
+                      </Link>
+                      <Link
+                        href="/videos"
+                        className="text-gray-700 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Videos
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/dashboard"
+                        className="text-gray-700 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Dashboard
+                      </Link>
+                      <Link
+                        href="/account"
+                        className="text-gray-700 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        My Materials
+                      </Link>
+                      <Link
+                        href="/videos"
+                        className="text-gray-700 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Videos
+                      </Link>
+                    </>
+                  )}
                 </>
               ) : (
                 <>
@@ -231,6 +272,16 @@ export function NavigationWithAuth() {
                     <p className="text-xs text-gray-500">{session.user?.email}</p>
                   </div>
 
+                  {session.user?.isAdmin && (
+                    <Link
+                      href="/dashboard"
+                      className="text-gray-700 hover:text-primary font-medium transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Learning Dashboard
+                    </Link>
+                  )}
+
                   <Link
                     href="/account"
                     className="text-gray-700 hover:text-primary font-medium transition-colors"
@@ -245,19 +296,6 @@ export function NavigationWithAuth() {
                   >
                     Browse Shop
                   </Link>
-
-                  {session.user?.isAdmin && (
-                    <>
-                      <hr className="my-2" />
-                      <Link
-                        href="/admin"
-                        className="text-gray-700 hover:text-primary font-medium transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Admin Dashboard
-                      </Link>
-                    </>
-                  )}
 
                   <hr className="my-2" />
                   <button

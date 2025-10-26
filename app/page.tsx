@@ -10,9 +10,14 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  // Redirect logged-in users to their dashboard
+  // Redirect logged-in users to appropriate dashboard
   const session = await getServerSession(authOptions)
   if (session) {
+    // Admins go directly to admin dashboard
+    if (session.user?.isAdmin) {
+      redirect('/admin')
+    }
+    // Regular users go to learning dashboard
     redirect('/dashboard')
   }
   return (
