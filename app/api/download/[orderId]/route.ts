@@ -59,7 +59,7 @@ export async function GET(
 
     // Get the specific pack if packId is provided, otherwise use the first pack
     let pack = packId
-      ? order.product.packs.find(p => p.id === packId)
+      ? order.product.packs.find((p: any) => p.id === packId)
       : order.product.packs[0]
 
     // Verify the pack belongs to this product
