@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const body = await request.json()
+    const body = await request.json() as { orderId?: string; packId?: string }
     const { orderId, packId } = body
 
     if (!orderId || !packId) {
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify the pack belongs to this product
-    const packBelongsToProduct = order.product.packs.some(p => p.id === packId)
+    const packBelongsToProduct = order.product.packs.some((p: any) => p.id === packId)
     if (!packBelongsToProduct) {
       return NextResponse.json(
         { error: 'Pack not found in this order' },
