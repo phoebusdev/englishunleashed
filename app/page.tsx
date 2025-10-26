@@ -1,12 +1,20 @@
 import { Metadata } from "next"
 import Link from "next/link"
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
+import { authOptions } from "@/lib/auth"
 
 export const metadata: Metadata = {
   title: "English Unleashed - Learn English with PDFs",
   description: "Simple, clear English learning materials you can download and use anywhere. Learn with our proven shadowing method.",
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Redirect logged-in users to their dashboard
+  const session = await getServerSession(authOptions)
+  if (session) {
+    redirect('/dashboard')
+  }
   return (
     <>
       {/* Hero Section */}

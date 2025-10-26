@@ -46,16 +46,33 @@ export function NavigationWithAuth() {
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/shop" className="text-gray-700 hover:text-primary font-medium transition-colors">
-              Shop PDFs
-            </Link>
-            <Link href="/videos" className="text-gray-700 hover:text-primary font-medium transition-colors">
-              Videos
-            </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-primary font-medium transition-colors">
-              Contact
-            </Link>
-            
+            {/* Conditional navigation based on auth state */}
+            {session ? (
+              <>
+                <Link href="/dashboard" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                  Dashboard
+                </Link>
+                <Link href="/account" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                  My Materials
+                </Link>
+                <Link href="/videos" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                  Videos
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/shop" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                  Shop PDFs
+                </Link>
+                <Link href="/videos" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                  Videos
+                </Link>
+                <Link href="/contact" className="text-gray-700 hover:text-primary font-medium transition-colors">
+                  Contact
+                </Link>
+              </>
+            )}
+
             {/* Auth section */}
             {status === 'loading' ? (
               <div className="w-8 h-8 animate-pulse bg-gray-200 rounded-full" />
@@ -75,40 +92,25 @@ export function NavigationWithAuth() {
                       <p className="text-sm font-medium text-gray-900">{session.user?.name || 'User'}</p>
                       <p className="text-xs text-gray-500">{session.user?.email}</p>
                     </div>
-                    
+
                     <Link
                       href="/account"
                       className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
-                      <ShoppingBag className="w-4 h-4" />
-                      My Purchases
-                    </Link>
-                    <Link
-                      href="/account/quiz-history"
-                      className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      <BookOpen className="w-4 h-4" />
-                      Quiz History
-                    </Link>
-                    <Link
-                      href="/account/profile"
-                      className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
                       <UserCircle className="w-4 h-4" />
-                      Edit Profile
+                      Account Settings
                     </Link>
+
                     <Link
-                      href="/account/secure"
+                      href="/shop"
                       className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
-                      <Shield className="w-4 h-4" />
-                      Account Security
+                      <ShoppingBag className="w-4 h-4" />
+                      Browse Shop
                     </Link>
-                    
+
                     {session.user?.isAdmin && (
                       <>
                         <hr className="my-2" />
@@ -122,7 +124,7 @@ export function NavigationWithAuth() {
                         </Link>
                       </>
                     )}
-                    
+
                     <hr className="my-2" />
                     <button
                       onClick={handleSignOut}
@@ -169,71 +171,86 @@ export function NavigationWithAuth() {
         {isMenuOpen && (
           <div className="md:hidden pb-4 border-t border-gray-100">
             <div className="flex flex-col space-y-3 pt-4">
-              <Link 
-                href="/shop" 
-                className="text-gray-700 hover:text-primary font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Shop PDFs
-              </Link>
-              <Link 
-                href="/videos" 
-                className="text-gray-700 hover:text-primary font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Videos
-              </Link>
-              <Link 
-                href="/contact" 
-                className="text-gray-700 hover:text-primary font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
-              </Link>
-              
+              {/* Conditional mobile navigation based on auth state */}
+              {session ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="text-gray-700 hover:text-primary font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/account"
+                    className="text-gray-700 hover:text-primary font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    My Materials
+                  </Link>
+                  <Link
+                    href="/videos"
+                    className="text-gray-700 hover:text-primary font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Videos
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/shop"
+                    className="text-gray-700 hover:text-primary font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Shop PDFs
+                  </Link>
+                  <Link
+                    href="/videos"
+                    className="text-gray-700 hover:text-primary font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Videos
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="text-gray-700 hover:text-primary font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Contact
+                  </Link>
+                </>
+              )}
+
               <hr className="my-2" />
-              
+
               {session ? (
                 <>
                   <div className="px-4 py-2 bg-gray-50 rounded-lg mb-2">
                     <p className="text-sm font-medium text-gray-900">{session.user?.name || 'User'}</p>
                     <p className="text-xs text-gray-500">{session.user?.email}</p>
                   </div>
-                  
-                  <Link 
-                    href="/account" 
+
+                  <Link
+                    href="/account"
                     className="text-gray-700 hover:text-primary font-medium transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    My Purchases
+                    Account Settings
                   </Link>
-                  <Link 
-                    href="/account/quiz-history" 
+                  <Link
+                    href="/shop"
                     className="text-gray-700 hover:text-primary font-medium transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Quiz History
+                    Browse Shop
                   </Link>
-                  <Link 
-                    href="/account/profile" 
-                    className="text-gray-700 hover:text-primary font-medium transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Edit Profile
-                  </Link>
-                  <Link 
-                    href="/account/secure" 
-                    className="text-gray-700 hover:text-primary font-medium transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Account Security
-                  </Link>
-                  
+
                   {session.user?.isAdmin && (
                     <>
                       <hr className="my-2" />
-                      <Link 
-                        href="/admin" 
+                      <Link
+                        href="/admin"
                         className="text-gray-700 hover:text-primary font-medium transition-colors"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -241,7 +258,7 @@ export function NavigationWithAuth() {
                       </Link>
                     </>
                   )}
-                  
+
                   <hr className="my-2" />
                   <button
                     onClick={handleSignOut}

@@ -52,7 +52,14 @@ export default function PacksListClient({ packs: initialPacks }: PacksListClient
         method: 'DELETE',
       })
 
-      if (!response.ok) throw new Error('Failed to delete pack')
+      const data = await response.json()
+
+      if (!response.ok) {
+        // Show detailed error message if available
+        const errorMessage = data.details || data.error || 'Failed to delete pack'
+        toast('error', 'Delete failed', errorMessage)
+        return
+      }
 
       setPacks(packs.filter(p => p.id !== packToDelete.id))
       toast('success', 'Pack deleted', `${packToDelete.title} has been deleted successfully`)
@@ -61,6 +68,7 @@ export default function PacksListClient({ packs: initialPacks }: PacksListClient
       toast('error', 'Delete failed', 'Failed to delete pack. Please try again.')
     } finally {
       setIsDeleting(false)
+      setDeleteDialogOpen(false)
     }
   }
 
