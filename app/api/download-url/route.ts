@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { generateDownloadToken } from '@/lib/jwt'
-import { env } from 'env.mjs'
 
 export async function POST(request: NextRequest) {
   try {
@@ -83,8 +82,11 @@ export async function POST(request: NextRequest) {
       expiresIn
     )
 
-    // Generate download URL
-    const baseUrl = env.NEXTAUTH_URL || 'http://localhost:3000'
+    // Generate download URL using the current request's host
+    // This ensures it works on preview deployments, production, and localhost
+    const protocol = request.headers.get('x-forwarded-proto') || 'https'
+    const host = request.headers.get('host') || request.headers.get('x-forwarded-host') || 'localhost:3000'
+    const baseUrl = `${protocol}://${host}`
     const downloadUrl = `${baseUrl}/api/download/${order.id}?token=${downloadToken}&packId=${packId}`
 
     return NextResponse.json({
