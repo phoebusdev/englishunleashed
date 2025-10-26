@@ -1,6 +1,9 @@
 import { createEnv } from "@t3-oss/env-nextjs"
 import { z } from "zod"
 
+// Check if we're in actual production deployment (not just local build)
+const isProduction = process.env.NODE_ENV === 'production' && process.env.VERCEL === '1'
+
 export const env = createEnv({
   server: {
     ANALYZE: z
@@ -10,17 +13,29 @@ export const env = createEnv({
     YOUTUBE_API_KEY: z.string().optional(),
     YOUTUBE_CHANNEL_ID: z.string().optional(),
     YOUTUBE_CHANNEL_HANDLE: z.string().optional(),
+    // Always required
     DATABASE_URL: z.string().min(1),
     NEXTAUTH_URL: z.string().min(1),
-    NEXTAUTH_SECRET: z.string().min(1),
-    STRIPE_SECRET_KEY: z.string().optional(),
-    STRIPE_WEBHOOK_SECRET: z.string().optional(),
-    BLOB_READ_WRITE_TOKEN: z.string().optional(),
-    CRON_SECRET: z.string().optional(),
-    RESEND_API_KEY: z.string().optional(),
+    NEXTAUTH_SECRET: z.string().min(32, "NEXTAUTH_SECRET must be at least 32 characters"),
+    // Required in production, optional in development
+    STRIPE_SECRET_KEY: isProduction
+      ? z.string().min(1, "STRIPE_SECRET_KEY is required in production")
+      : z.string().optional(),
+    STRIPE_WEBHOOK_SECRET: isProduction
+      ? z.string().min(1, "STRIPE_WEBHOOK_SECRET is required in production")
+      : z.string().optional(),
+    BLOB_READ_WRITE_TOKEN: isProduction
+      ? z.string().min(1, "BLOB_READ_WRITE_TOKEN is required in production")
+      : z.string().optional(),
+    RESEND_API_KEY: isProduction
+      ? z.string().min(1, "RESEND_API_KEY is required in production")
+      : z.string().optional(),
+    CRON_SECRET: z.string().optional(), // Optional for now (cron requires paid Vercel plan)
   },
   client: {
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: isProduction
+      ? z.string().min(1, "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is required in production")
+      : z.string().optional(),
   },
   runtimeEnv: {
     ANALYZE: process.env.ANALYZE,

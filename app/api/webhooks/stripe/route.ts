@@ -49,15 +49,6 @@ export async function POST(req: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
 
-        // Debug logging
-        console.log('[Webhook] Session details:', {
-          id: session.id,
-          payment_status: session.payment_status,
-          payment_link: session.payment_link,
-          metadata: session.metadata,
-          customer_email: session.customer_email
-        })
-
         // Get pack ID from metadata - handle both singular packId and plural packIds
         let packId = session.metadata?.packId // Try singular first
 
@@ -74,8 +65,6 @@ export async function POST(req: Request) {
             ? session.payment_link
             : session.payment_link.id
 
-          console.log('[Webhook] No packId in metadata, looking up by payment link:', paymentLinkId)
-
           const product = await prisma.product.findFirst({
             where: { stripePaymentLinkId: paymentLinkId },
             include: { packs: { orderBy: { order: 'asc' } } }
@@ -83,9 +72,6 @@ export async function POST(req: Request) {
 
           if (product && product.packs.length > 0) {
             packId = product.packs[0].id
-            console.log('[Webhook] Found pack via payment link:', packId)
-          } else {
-            console.log('[Webhook] No product found with stripePaymentLinkId:', paymentLinkId)
           }
         }
 
@@ -147,8 +133,6 @@ export async function POST(req: Request) {
           }
         })
 
-        console.log('Order created:', order.id)
-        
         // Generate secure download token
         const downloadToken = generateDownloadToken(
           order.id,
@@ -181,7 +165,7 @@ export async function POST(req: Request) {
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
+        // Silently ignore unhandled event types
     }
 
     return NextResponse.json({ received: true })
